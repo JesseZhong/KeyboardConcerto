@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardConcerto", "Keyboar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RawInput", "RawInput\RawInput.csproj", "{4143D085-38CF-4640-BB05-2FDFFAF94D76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockInput", "BlockInput\BlockInput.csproj", "{8086CB4C-E318-42DA-A248-B1E2C9D13238}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,14 @@ Global
 		{4143D085-38CF-4640-BB05-2FDFFAF94D76}.Release|x64.Build.0 = Release|x64
 		{4143D085-38CF-4640-BB05-2FDFFAF94D76}.Release|x86.ActiveCfg = Release|x86
 		{4143D085-38CF-4640-BB05-2FDFFAF94D76}.Release|x86.Build.0 = Release|x86
+		{8086CB4C-E318-42DA-A248-B1E2C9D13238}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8086CB4C-E318-42DA-A248-B1E2C9D13238}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8086CB4C-E318-42DA-A248-B1E2C9D13238}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8086CB4C-E318-42DA-A248-B1E2C9D13238}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8086CB4C-E318-42DA-A248-B1E2C9D13238}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8086CB4C-E318-42DA-A248-B1E2C9D13238}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8086CB4C-E318-42DA-A248-B1E2C9D13238}.Release|x64.ActiveCfg = Release|Any CPU
+		{8086CB4C-E318-42DA-A248-B1E2C9D13238}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

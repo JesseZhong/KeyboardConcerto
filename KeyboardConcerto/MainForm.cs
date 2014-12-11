@@ -31,11 +31,13 @@ namespace KeyboardConcerto {
 			Win32.DeviceAudit();
 		}
 
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void OnKeyPressed(object sender, InputEventArg e) {
-			if (this.mUserSettings.ProcessInput())
-				return;
-			
+			this.mUserSettings.ProcessInput(e);
 		}
 
 		#region Program Entry Point

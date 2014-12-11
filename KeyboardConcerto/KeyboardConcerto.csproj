@@ -91,6 +91,11 @@
     <Content Include="Items.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BlockInput\BlockInput.csproj">
+      <Project>{8086cb4c-e318-42da-a248-b1e2c9d13238}</Project>
+      <Name>BlockInput</Name>
+      <IlMerge>True</IlMerge>
+    </ProjectReference>
     <ProjectReference Include="..\RawInput\RawInput.csproj">
       <Project>{4143d085-38cf-4640-bb05-2fdffaf94d76}</Project>
       <Name>RawInput</Name>

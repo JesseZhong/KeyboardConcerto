@@ -7,3 +7,4 @@ E:\Projects\KeyboardConcerto\KeyboardConcerto\bin\Debug\KeyboardConcerto.exe
 E:\Projects\KeyboardConcerto\KeyboardConcerto\bin\Debug\KeyboardConcerto.pdb
 E:\Projects\KeyboardConcerto\KeyboardConcerto\obj\Debug\KeyboardConcerto.exe
 E:\Projects\KeyboardConcerto\KeyboardConcerto\obj\Debug\KeyboardConcerto.pdb
+C:\Users\JLZ\Desktop\KeyboardConcerto\KeyboardConcerto\bin\Debug\KeyboardConcerto.exe.config

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
+using System.Runtime.InteropServices;
 using RawInput_dll;
 using Common;
 #endregion
@@ -28,6 +29,8 @@ namespace KeyboardConcerto {
 		private UserSettings mUserSettings;
 
 		private MemoryMappedFile mMemoryMappedFile;
+
+		private Queue<Decision> mDecisionQueue;
 		#endregion
 
 		#region Initialization
@@ -36,7 +39,9 @@ namespace KeyboardConcerto {
 		/// </summary>
 		public MainForm() {
 			this.InitializeComponent();
+			this.mDecisionQueue = new Queue<Decision>();
 			AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
+			IntPtr accessHandle = this.Handle; // Ensure that the handle is created.
 
 			this.mRawInput = new RawInput(this.Handle);
 			this.mRawInput.CaptureOnlyIfTopMostWindow = false;
@@ -65,18 +70,40 @@ namespace KeyboardConcerto {
 			}
 			mutex.ReleaseMutex();
 		}
+
+		/// <summary>
+		/// Ensure that the messages are still received when the form is minimized.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnHandleCreated(EventArgs e) {
+			base.OnHandleCreated(e);
+			IntPtr HWND_MESSAGE = new IntPtr(-3);
+			SetParent(this.Handle, HWND_MESSAGE);
+		}
 		#endregion
 
 		#region Keyboard Handling
-
-
 		/// <summary>
-		/// 
+		/// Processes the input and enqueues the decision to be executed later.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void OnKeyPressed(object sender, InputEventArg e) {
-			this.mUserSettings.ProcessInput(e);
+			this.mDecisionQueue.Enqueue(new Decision() {
+				Key = (Keys)e.KeyPressEvent.VKey,
+				Allow = this.mUserSettings.ProcessInput(e)
+			});
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="m"></param>
+		protected override void WndProc(ref Message m) {
+
+
+
+			base.WndProc(ref m);
 		}
 		#endregion
 
@@ -118,6 +145,11 @@ namespace KeyboardConcerto {
 			Debug.WriteLine("Unhandled Exception: " + ex);
 			MessageBox.Show(ex.Message);
 		}
+		#endregion
+
+		#region Windows API
+		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 		#endregion
 	}
 }

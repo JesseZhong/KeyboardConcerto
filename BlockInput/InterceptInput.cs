@@ -20,8 +20,9 @@ using Common;
 namespace InterceptInput {
 
 	/// <summary>
-	/// Intercepts user input, broadcasts to subscribers and waits for callback.
-	/// If the input is to be allowed, the D
+	/// Hooks standard keyboard input from the main application,
+	/// checks against raw input and user settings, and determines
+	/// whether to allow or block the input.
 	/// </summary>
 	public class InterceptInput {
 
@@ -67,6 +68,7 @@ namespace InterceptInput {
 		}
 		#endregion
 
+		#region Keyboard Handling
 		/// <summary>
 		/// Handle the windows messages.
 		/// </summary>
@@ -75,10 +77,10 @@ namespace InterceptInput {
 		/// <param name="lParam"></param>
 		/// <returns></returns>
 		private IntPtr ProcessKeyboard(int code, IntPtr wParam, IntPtr lParam) {
-			
+
 			// If the code is less than zero, the message must be passed on.
 			// See: http://msdn.microsoft.com/en-us/library/windows/desktop/ms644984%28v=vs.85%29.aspx
-			if(code < 0)
+			if (code < 0)
 				return CallNextHookEx(mHookHandle, code, wParam, lParam);
 
 			// Block input if the call back requests it.
@@ -88,6 +90,7 @@ namespace InterceptInput {
 			// Otherwise, pass input on.
 			return CallNextHookEx(mHookHandle, code, wParam, lParam);
 		}
+		#endregion
 
 		#region Windows API
 		// idHooks: List of hook IDs in Windows API.

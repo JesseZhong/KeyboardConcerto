@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Decision.cs" />
     <Compile Include="ExecCommand.cs" />
     <Compile Include="ExecNode.cs" />
     <Compile Include="ExecTimer.cs" />

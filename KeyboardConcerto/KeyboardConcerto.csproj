@@ -91,9 +91,9 @@
     <Content Include="Items.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BlockInput\BlockInput.csproj">
+    <ProjectReference Include="..\BlockInput\InterceptInput.csproj">
       <Project>{8086cb4c-e318-42da-a248-b1e2c9d13238}</Project>
-      <Name>BlockInput</Name>
+      <Name>InterceptInput</Name>
       <IlMerge>True</IlMerge>
     </ProjectReference>
     <ProjectReference Include="..\RawInput\RawInput.csproj">

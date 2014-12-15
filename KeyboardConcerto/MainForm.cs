@@ -17,6 +17,9 @@ namespace KeyboardConcerto {
 		private UserSettings mUserSettings;
 		#endregion
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public MainForm() {
 			this.InitializeComponent();
 			AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
@@ -45,7 +48,7 @@ namespace KeyboardConcerto {
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main() {
+		public static void Main() {
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainForm());

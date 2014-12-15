@@ -5,8 +5,8 @@ using System;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections.Generic;
+using InterceptInput;
 using RawInput_dll;
-using BlockInput;
 #endregion
 
 namespace KeyboardConcerto {
@@ -42,6 +42,11 @@ namespace KeyboardConcerto {
 			this.mKeyboardProfiles = new Dictionary<string, KeyboardMacros>();
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="arguments"></param>
+		/// <returns></returns>
 		public bool ProcessInput(InputEventArg arguments) {
 
 			return true;

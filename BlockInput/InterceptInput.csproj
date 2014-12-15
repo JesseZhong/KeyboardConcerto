@@ -7,8 +7,8 @@
     <ProjectGuid>{8086CB4C-E318-42DA-A248-B1E2C9D13238}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BlockInput</RootNamespace>
-    <AssemblyName>BlockInput</AssemblyName>
+    <RootNamespace>InterceptInput</RootNamespace>
+    <AssemblyName>InterceptInput</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlockInput.cs" />
+    <Compile Include="InterceptInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

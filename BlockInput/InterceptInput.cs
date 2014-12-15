@@ -1,7 +1,9 @@
-﻿// BlockInput.cs
+﻿// InterceptInput.cs
 // Original base code by Agha Usman Ahmed
 // Article: http://geekswithblogs.net/aghausman/archive/2009/04/26/disable-special-keys-in-win-app-c.aspx
-// Modified by Jesse Z. Zhong
+// Concept borrowed from Petre Medek
+// From comments section in http://www.codeproject.com/Articles/17123/Using-Raw-Input-from-C-to-handle-multiple-keyboard?fid=375378&fr=226#xx0xx
+// Authored by Jesse Z. Zhong
 #region Usings
 using System;
 using System.Diagnostics;
@@ -9,22 +11,46 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 #endregion
 
-namespace BlockInput {
-	public class BlockInput {
+namespace InterceptInput {
+
+	/// <summary>
+	/// Intercepts user input, broadcasts to subscribers and waits for callback.
+	/// If the input is to be allowed, the D
+	/// </summary>
+	public class InterceptInput : IDisposable {
+
+		#region Global Constants
+		/// <summary>
+		/// Global name of the memory-mapped file being shared.
+		/// </summary>
+		public const string MAPPED_FILE_NAME = "BlockInputMemoryMapped";
+		#endregion
 
 		#region Members
+		private bool mDisposed;
 		private IntPtr mPtrHook;
 		private LowLevelKeyboardProc mObjKeyboardProcess;
 		#endregion
 
 		#region Initialization
-		public BlockInput() {
+		/// <summary>
+		/// Set up hooks for the DLL's process.
+		/// </summary>
+		public InterceptInput() {
+			this.mDisposed = false;
 			ProcessModule objCurrentModule = Process.GetCurrentProcess().MainModule;
 			this.mObjKeyboardProcess = new LowLevelKeyboardProc(CaptureKey);
 			this.mPtrHook = SetWindowsHookEx(13, this.mObjKeyboardProcess, GetModuleHandle(objCurrentModule.ModuleName), 0);
 		}
 		#endregion
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="nCode"></param>
+		/// <param name="wp"></param>
+		/// <param name="lp"></param>
+		/// <returns></returns>
 		private IntPtr CaptureKey(int nCode, IntPtr wp, IntPtr lp) {
 			if (nCode >= 0) {
 				KBDLLHOOKSTRUCT objKeyInfo = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lp, typeof(KBDLLHOOKSTRUCT));
@@ -38,6 +64,26 @@ namespace BlockInput {
 
 		public delegate bool ProcessInputDelegate(Keys keystroke);
 		public ProcessInputDelegate ProcessInput;
+
+		#region Destruction
+		/// <summary>
+		/// Release unmanaged resources.
+		/// </summary>
+		public void Dispose() {
+			if (this.mDisposed)
+				return;
+
+
+		}
+		#endregion
+
+		#region Assembly Entry
+		[STAThread]
+		public static void Main() {
+			using (InterceptInput interceptInput = new InterceptInput())
+				Application.Run();
+		}
+		#endregion
 
 		#region Windows API
 		// Structure contain information about low-level keyboard input event.

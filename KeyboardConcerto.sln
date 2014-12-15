@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardConcerto", "Keyboar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RawInput", "RawInput\RawInput.csproj", "{4143D085-38CF-4640-BB05-2FDFFAF94D76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockInput", "BlockInput\BlockInput.csproj", "{8086CB4C-E318-42DA-A248-B1E2C9D13238}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterceptInput", "BlockInput\InterceptInput.csproj", "{8086CB4C-E318-42DA-A248-B1E2C9D13238}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

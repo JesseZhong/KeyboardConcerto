@@ -96,6 +96,11 @@
       <Name>InterceptInput</Name>
       <IlMerge>True</IlMerge>
     </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{b0c1413a-8c6d-4a4b-b7cc-d14234f37b1e}</Project>
+      <Name>Common</Name>
+      <IlMerge>True</IlMerge>
+    </ProjectReference>
     <ProjectReference Include="..\RawInput\RawInput.csproj">
       <Project>{4143d085-38cf-4640-bb05-2fdffaf94d76}</Project>
       <Name>RawInput</Name>

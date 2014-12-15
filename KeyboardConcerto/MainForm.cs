@@ -2,23 +2,57 @@
 // Authored by Jesse Z. Zhong
 #region Usings
 using System;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.IO.MemoryMappedFiles;
 using RawInput_dll;
+using Common;
 #endregion
 
 namespace KeyboardConcerto {
 	public partial class MainForm : Form {
 
+		#region Public Members
+		/// <summary>
+		/// Global name of the memory-mapped file being shared.
+		/// </summary>
+		/// <remarks>
+		/// Included process ID in the event there's another instance.
+		/// </remarks>
+		public static readonly string MappedFileName = "InterceptInputMemoryMappedFile"
+			+ Process.GetCurrentProcess().Id.ToString();
+
+		/// <summary>
+		/// Global name of the Mutex used to safely access the shared file.
+		/// </summary>
+		/// <remarks>
+		/// Included process ID in the event there's another instance.
+		/// </remarks>
+		public static readonly string SharedMutexName = "InterceptInputSharedMutex"
+			+ Process.GetCurrentProcess().Id.ToString();
+		#endregion
+
+		#region Constants
+		/// <summary>
+		/// The size of the memory-mapped file.
+		/// </summary>
+		private const long MEMORY_MAPPED_FILE_SIZE = 1024;
+		#endregion
+
 		#region Members
 		private readonly RawInput mRawInput;
 		private UserSettings mUserSettings;
+
+		private MemoryMappedFile mMemoryMappedFile;
 		#endregion
 
+		#region Initialization
 		/// <summary>
-		/// 
+		/// Initialize the form's components, input handling, and memory.
 		/// </summary>
 		public MainForm() {
 			this.InitializeComponent();
@@ -31,8 +65,28 @@ namespace KeyboardConcerto {
 
 			this.mUserSettings = new UserSettings();
 
+			this.mMemoryMappedFile = MemoryMappedFile.CreateNew(MappedFileName, MEMORY_MAPPED_FILE_SIZE);
+			this.InitializeHandleMMF();
+
 			Win32.DeviceAudit();
 		}
+
+		/// <summary>
+		/// Initialize the memory-mapped file for sharing the form's handle.
+		/// </summary>
+		private void InitializeHandleMMF() {
+			bool mutexCreated = false;
+			Mutex mutex = new Mutex(true, SharedMutexName, out mutexCreated);
+			using (MemoryMappedViewStream stream = this.mMemoryMappedFile.CreateViewStream()) {
+				BinaryWriter writer = new BinaryWriter(stream);
+				writer.Write(Conversion.ToBytes(this.Handle));
+			}
+			mutex.ReleaseMutex();
+		}
+		#endregion
+
+		#region Keyboard Handling
+
 
 		/// <summary>
 		/// 
@@ -42,6 +96,21 @@ namespace KeyboardConcerto {
 		private void OnKeyPressed(object sender, InputEventArg e) {
 			this.mUserSettings.ProcessInput(e);
 		}
+		#endregion
+
+		#region Managing Resources
+		/// <summary>
+		/// Release unmanaged resources.
+		/// </summary>
+		public new void Dispose() {
+			if (this.IsDisposed)
+				return;
+
+			this.mMemoryMappedFile.Dispose();
+
+			base.Dispose();
+		}
+		#endregion
 
 		#region Program Entry Point
 		/// <summary>

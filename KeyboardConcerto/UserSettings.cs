@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using InterceptInput;
 using RawInput_dll;
+using Common;
 #endregion
 
 namespace KeyboardConcerto {
@@ -48,6 +49,7 @@ namespace KeyboardConcerto {
 		/// <param name="arguments"></param>
 		/// <returns></returns>
 		public bool ProcessInput(InputEventArg arguments) {
+
 
 			return true;
 		}

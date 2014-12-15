@@ -3,6 +3,8 @@
 // Article: http://geekswithblogs.net/aghausman/archive/2009/04/26/disable-special-keys-in-win-app-c.aspx
 // Concept borrowed from Petre Medek
 // From comments section in http://www.codeproject.com/Articles/17123/Using-Raw-Input-from-C-to-handle-multiple-keyboard?fid=375378&fr=226#xx0xx
+// Detailed explanation and C++ example by Vit Blecha
+// Article: http://www.codeproject.com/Articles/716591/Combining-Raw-Input-and-keyboard-Hook-to-selective
 // Authored by Jesse Z. Zhong
 #region Usings
 using System;
@@ -21,27 +23,7 @@ namespace InterceptInput {
 	/// Intercepts user input, broadcasts to subscribers and waits for callback.
 	/// If the input is to be allowed, the D
 	/// </summary>
-	public class InterceptInput : IDisposable {
-
-		#region Public Members
-		/// <summary>
-		/// Global name of the memory-mapped file being shared.
-		/// </summary>
-		/// <remarks>
-		/// Included process ID in the event there's another instance.
-		/// </remarks>
-		public readonly string MappedFileName = "InterceptInputMemoryMappedFile" 
-			+ Process.GetCurrentProcess().Id.ToString();
-
-		/// <summary>
-		/// Global name of the Mutex used to safely access the shared file.
-		/// </summary>
-		/// <remarks>
-		/// Included process ID in the event there's another instance.
-		/// </remarks>
-		public readonly string SharedMutexName = "InterceptInputSharedMutex"
-			+ Process.GetCurrentProcess().Id.ToString();
-		#endregion
+	public class InterceptInput {
 
 		#region Constants
 		/// <summary>
@@ -51,14 +33,8 @@ namespace InterceptInput {
 		#endregion
 
 		#region Members
-		private bool mDisposed;
-
 		private IntPtr mPtrHook;
-		private LowLevelKeyboardProc mObjKeyboardProcess;
-
-		private Mutex mMutex;
-		private bool mMutexInitialized;
-		private MemoryMappedFile mMemMappedFile;
+		private KeyboardProc mKeyboardProcess;
 		#endregion
 
 		#region Initialization
@@ -66,21 +42,9 @@ namespace InterceptInput {
 		/// Set up hooks for the DLL's process.
 		/// </summary>
 		public InterceptInput() {
-			this.mDisposed = false;
 			ProcessModule objCurrentModule = Process.GetCurrentProcess().MainModule;
-			this.mObjKeyboardProcess = new LowLevelKeyboardProc(CaptureKey);
-			this.mPtrHook = SetWindowsHookEx(13, this.mObjKeyboardProcess, GetModuleHandle(objCurrentModule.ModuleName), 0);
-
-			this.mMemMappedFile = MemoryMappedFile.CreateNew(this.MappedFileName, MEMORY_MAPPED_FILE_SIZE);
-			this.mMutex = new Mutex(true, this.SharedMutexName, out this.mMutexInitialized);
-
-			using (MemoryMappedViewStream stream = this.mMemMappedFile.CreateViewStream(0, 0)) {
-				BinaryWriter writer = new BinaryWriter(stream);
-				writer.Write((new KBDLLHOOKSTRUCT()).ToBytes());
-				writer.Write(false);
-				writer.Write(false);
-			}
-			this.mMutex.ReleaseMutex();
+			this.mKeyboardProcess = new KeyboardProc(ProcessKeyboard);
+			this.mPtrHook = SetWindowsHookEx(WH_KEYBOARD, this.mKeyboardProcess, GetModuleHandle(objCurrentModule.ModuleName), 0);
 		}
 		#endregion
 
@@ -91,73 +55,29 @@ namespace InterceptInput {
 		/// <param name="wp"></param>
 		/// <param name="lp"></param>
 		/// <returns></returns>
-		private IntPtr CaptureKey(int nCode, IntPtr wp, IntPtr lp) {
-			const int boolSize = sizeof(bool);
-			if (nCode >= 0) {
-				KBDLLHOOKSTRUCT objKeyInfo = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lp, typeof(KBDLLHOOKSTRUCT));
-
-				// Store the key info in the shared file.
-				this.mMutex.WaitOne();
-				using (MemoryMappedViewStream stream = this.mMemMappedFile.CreateViewStream(0, 0)) {
-					BinaryWriter writer = new BinaryWriter(stream);
-					writer.Write(objKeyInfo.ToBytes());
-				}
-				this.mMutex.ReleaseMutex();
+		private IntPtr ProcessKeyboard(int code, IntPtr wParam, IntPtr lParam) {
+			if (code >= 0) {
+				
 
 				bool response = false;
-				bool responseReady = false;
-
-				// Wait for the main process to respond.
-				while (!responseReady) {
-					this.mMutex.WaitOne();
-					using (MemoryMappedViewStream stream = this.mMemMappedFile.CreateViewStream(1, boolSize)) {
-						BinaryReader reader = new BinaryReader(stream);
-						responseReady = reader.ReadBoolean();
-					}
-					this.mMutex.ReleaseMutex();
-				}
-
-				// Read the response.
-				this.mMutex.WaitOne();
-				using (MemoryMappedViewStream stream = this.mMemMappedFile.CreateViewStream(2, boolSize)) {
-					BinaryReader reader = new BinaryReader(stream);
-					response = reader.ReadBoolean();
-				}
-				this.mMutex.ReleaseMutex();
 
 				// Block input if the response is true.
 				if(response)
 					return (IntPtr)1;
 			}
-			return CallNextHookEx(mPtrHook, nCode, wp, lp);
+			return CallNextHookEx(mPtrHook, code, wParam, lParam);
 		}
-
-		#region Destruction
-		/// <summary>
-		/// Release unmanaged resources.
-		/// </summary>
-		public void Dispose() {
-			if (this.mDisposed)
-				return;
-
-			this.mMutex.Dispose();
-			this.mMemMappedFile.Dispose();
-		}
-		#endregion
-
-		#region Assembly Entry
-		[STAThread]
-		public static void Main() {
-			using (InterceptInput interceptInput = new InterceptInput())
-				Application.Run();
-		}
-		#endregion
 
 		#region Windows API
-		//System level functions to be used for hook and unhook keyboard input.
-		private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+		// idHooks: List of hook IDs in Windows API.
+		private const int WH_KEYBOARD = 2;
+		private const int WH_KEYBOARD_LL = 13;
+
+		private delegate IntPtr KeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+		// System level functions to be used for hook and unhook keyboard input.
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		private static extern IntPtr SetWindowsHookEx(int id, LowLevelKeyboardProc callback, IntPtr hMod, uint dwThreadId);
+		private static extern IntPtr SetWindowsHookEx(int id, KeyboardProc callback, IntPtr hMod, uint dwThreadId);
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		private static extern bool UnhookWindowsHookEx(IntPtr hook);
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]

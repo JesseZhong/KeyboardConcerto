@@ -6,9 +6,13 @@
 // Authored by Jesse Z. Zhong
 #region Usings
 using System;
+using System.IO;
+using System.Threading;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
+using Common;
 #endregion
 
 namespace InterceptInput {
@@ -19,17 +23,42 @@ namespace InterceptInput {
 	/// </summary>
 	public class InterceptInput : IDisposable {
 
-		#region Global Constants
+		#region Public Members
 		/// <summary>
 		/// Global name of the memory-mapped file being shared.
 		/// </summary>
-		public const string MAPPED_FILE_NAME = "BlockInputMemoryMapped";
+		/// <remarks>
+		/// Included process ID in the event there's another instance.
+		/// </remarks>
+		public readonly string MappedFileName = "InterceptInputMemoryMappedFile" 
+			+ Process.GetCurrentProcess().Id.ToString();
+
+		/// <summary>
+		/// Global name of the Mutex used to safely access the shared file.
+		/// </summary>
+		/// <remarks>
+		/// Included process ID in the event there's another instance.
+		/// </remarks>
+		public readonly string SharedMutexName = "InterceptInputSharedMutex"
+			+ Process.GetCurrentProcess().Id.ToString();
+		#endregion
+
+		#region Constants
+		/// <summary>
+		/// The size of the memory-mapped file.
+		/// </summary>
+		private const long MEMORY_MAPPED_FILE_SIZE = 1024;
 		#endregion
 
 		#region Members
 		private bool mDisposed;
+
 		private IntPtr mPtrHook;
 		private LowLevelKeyboardProc mObjKeyboardProcess;
+
+		private Mutex mMutex;
+		private bool mMutexInitialized;
+		private MemoryMappedFile mMemMappedFile;
 		#endregion
 
 		#region Initialization
@@ -41,29 +70,67 @@ namespace InterceptInput {
 			ProcessModule objCurrentModule = Process.GetCurrentProcess().MainModule;
 			this.mObjKeyboardProcess = new LowLevelKeyboardProc(CaptureKey);
 			this.mPtrHook = SetWindowsHookEx(13, this.mObjKeyboardProcess, GetModuleHandle(objCurrentModule.ModuleName), 0);
+
+			this.mMemMappedFile = MemoryMappedFile.CreateNew(this.MappedFileName, MEMORY_MAPPED_FILE_SIZE);
+			this.mMutex = new Mutex(true, this.SharedMutexName, out this.mMutexInitialized);
+
+			using (MemoryMappedViewStream stream = this.mMemMappedFile.CreateViewStream(0, 0)) {
+				BinaryWriter writer = new BinaryWriter(stream);
+				writer.Write((new KBDLLHOOKSTRUCT()).ToBytes());
+				writer.Write(false);
+				writer.Write(false);
+			}
+			this.mMutex.ReleaseMutex();
 		}
 		#endregion
 
 		/// <summary>
-		/// 
+		/// Handle the windows messages.
 		/// </summary>
 		/// <param name="nCode"></param>
 		/// <param name="wp"></param>
 		/// <param name="lp"></param>
 		/// <returns></returns>
 		private IntPtr CaptureKey(int nCode, IntPtr wp, IntPtr lp) {
+			const int boolSize = sizeof(bool);
 			if (nCode >= 0) {
 				KBDLLHOOKSTRUCT objKeyInfo = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lp, typeof(KBDLLHOOKSTRUCT));
 
-				if ((this.ProcessInput != null) && this.ProcessInput(objKeyInfo.Key))
-					// Block the input from being passed on.
+				// Store the key info in the shared file.
+				this.mMutex.WaitOne();
+				using (MemoryMappedViewStream stream = this.mMemMappedFile.CreateViewStream(0, 0)) {
+					BinaryWriter writer = new BinaryWriter(stream);
+					writer.Write(objKeyInfo.ToBytes());
+				}
+				this.mMutex.ReleaseMutex();
+
+				bool response = false;
+				bool responseReady = false;
+
+				// Wait for the main process to respond.
+				while (!responseReady) {
+					this.mMutex.WaitOne();
+					using (MemoryMappedViewStream stream = this.mMemMappedFile.CreateViewStream(1, boolSize)) {
+						BinaryReader reader = new BinaryReader(stream);
+						responseReady = reader.ReadBoolean();
+					}
+					this.mMutex.ReleaseMutex();
+				}
+
+				// Read the response.
+				this.mMutex.WaitOne();
+				using (MemoryMappedViewStream stream = this.mMemMappedFile.CreateViewStream(2, boolSize)) {
+					BinaryReader reader = new BinaryReader(stream);
+					response = reader.ReadBoolean();
+				}
+				this.mMutex.ReleaseMutex();
+
+				// Block input if the response is true.
+				if(response)
 					return (IntPtr)1;
 			}
 			return CallNextHookEx(mPtrHook, nCode, wp, lp);
 		}
-
-		public delegate bool ProcessInputDelegate(Keys keystroke);
-		public ProcessInputDelegate ProcessInput;
 
 		#region Destruction
 		/// <summary>
@@ -73,7 +140,8 @@ namespace InterceptInput {
 			if (this.mDisposed)
 				return;
 
-
+			this.mMutex.Dispose();
+			this.mMemMappedFile.Dispose();
 		}
 		#endregion
 
@@ -86,16 +154,6 @@ namespace InterceptInput {
 		#endregion
 
 		#region Windows API
-		// Structure contain information about low-level keyboard input event.
-		[StructLayout(LayoutKind.Sequential)]
-		private struct KBDLLHOOKSTRUCT {
-			public Keys Key;
-			public int ScanCode;
-			public int Flags;
-			public int Time;
-			public IntPtr Extra;
-		}
-
 		//System level functions to be used for hook and unhook keyboard input.
 		private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]

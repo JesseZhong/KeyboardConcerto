@@ -25,67 +25,88 @@ namespace InterceptInput {
 	/// </summary>
 	public class InterceptInput {
 
-		#region Constants
+		#region Global Constants
 		/// <summary>
-		/// The size of the memory-mapped file.
+		/// Global indicator for the hook.
 		/// </summary>
-		private const long MEMORY_MAPPED_FILE_SIZE = 1024;
+		public const int WM_HOOK = 0x8000 + 1;
 		#endregion
 
 		#region Members
-		private IntPtr mPtrHook;
-		private KeyboardProc mKeyboardProcess;
+		private IntPtr mHookHandle;
+		private IntPtr mWindowHandle;
 		#endregion
 
 		#region Initialization
 		/// <summary>
-		/// Set up hooks for the DLL's process.
+		/// Hook DLL to main program's window handle.
 		/// </summary>
 		public InterceptInput() {
-			ProcessModule objCurrentModule = Process.GetCurrentProcess().MainModule;
-			this.mKeyboardProcess = new KeyboardProc(ProcessKeyboard);
-			this.mPtrHook = SetWindowsHookEx(WH_KEYBOARD, this.mKeyboardProcess, GetModuleHandle(objCurrentModule.ModuleName), 0);
+
+			// Attempt to retrieve the window's handle from MMF and register hook with its process.
+			try {
+				using (MemoryMappedFile memoryMappedFile = MemoryMappedFile.OpenExisting(Sharing.MMF_NAME)) {
+
+					Mutex mutex = Mutex.OpenExisting(Sharing.MMF_MUTEX_NAME);
+					mutex.WaitOne();
+
+					using (MemoryMappedViewStream stream = memoryMappedFile.CreateViewStream(0, 0)) {
+						BinaryReader reader = new BinaryReader(stream);
+						int length = reader.ReadInt32();
+
+						if (length > 0) {
+							this.mWindowHandle = Conversion.FromBytes<IntPtr>(reader.ReadBytes(length));
+							if(IsWindow(this.mWindowHandle))
+								this.mHookHandle = SetWindowsHookEx(WH_KEYBOARD, ProcessKeyboard, this.mWindowHandle, 0);
+						}
+					}
+				}
+			} catch(FileNotFoundException) {
+				Console.WriteLine("Memory-mapped file does not exist.");
+			}
 		}
 		#endregion
 
 		/// <summary>
 		/// Handle the windows messages.
 		/// </summary>
-		/// <param name="nCode"></param>
-		/// <param name="wp"></param>
-		/// <param name="lp"></param>
+		/// <param name="code"></param>
+		/// <param name="wParam"></param>
+		/// <param name="lParam"></param>
 		/// <returns></returns>
 		private IntPtr ProcessKeyboard(int code, IntPtr wParam, IntPtr lParam) {
-			if (code >= 0) {
-				
+			
+			// If the code is less than zero, the message must be passed on.
+			// See: http://msdn.microsoft.com/en-us/library/windows/desktop/ms644984%28v=vs.85%29.aspx
+			if(code < 0)
+				return CallNextHookEx(mHookHandle, code, wParam, lParam);
 
-				bool response = false;
+			// Block input if the call back requests it.
+			if (IsWindow(this.mWindowHandle) && ((IntPtr)1 == SendMessage(this.mWindowHandle, WM_HOOK, wParam, lParam)))
+				return (IntPtr)1;
 
-				// Block input if the response is true.
-				if(response)
-					return (IntPtr)1;
-			}
-			return CallNextHookEx(mPtrHook, code, wParam, lParam);
+			// Otherwise, pass input on.
+			return CallNextHookEx(mHookHandle, code, wParam, lParam);
 		}
 
 		#region Windows API
 		// idHooks: List of hook IDs in Windows API.
 		private const int WH_KEYBOARD = 2;
-		private const int WH_KEYBOARD_LL = 13;
 
 		private delegate IntPtr KeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
 		// System level functions to be used for hook and unhook keyboard input.
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		private static extern IntPtr SetWindowsHookEx(int id, KeyboardProc callback, IntPtr hMod, uint dwThreadId);
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		private static extern bool UnhookWindowsHookEx(IntPtr hook);
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		private static extern IntPtr CallNextHookEx(IntPtr hook, int nCode, IntPtr wp, IntPtr lp);
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		private static extern IntPtr GetModuleHandle(string name);
-		[DllImport("user32.dll", CharSet = CharSet.Auto)]
-		private static extern short GetAsyncKeyState(Keys key);
+		private static extern IntPtr CallNextHookEx(IntPtr hook, int nCode, IntPtr wParam, IntPtr lParam);
+		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool IsWindow(IntPtr hWnd);
 		#endregion
 	}
 }

@@ -16,26 +16,6 @@ using Common;
 namespace KeyboardConcerto {
 	public partial class MainForm : Form {
 
-		#region Public Members
-		/// <summary>
-		/// Global name of the memory-mapped file being shared.
-		/// </summary>
-		/// <remarks>
-		/// Included process ID in the event there's another instance.
-		/// </remarks>
-		public static readonly string MappedFileName = "InterceptInputMemoryMappedFile"
-			+ Process.GetCurrentProcess().Id.ToString();
-
-		/// <summary>
-		/// Global name of the Mutex used to safely access the shared file.
-		/// </summary>
-		/// <remarks>
-		/// Included process ID in the event there's another instance.
-		/// </remarks>
-		public static readonly string SharedMutexName = "InterceptInputSharedMutex"
-			+ Process.GetCurrentProcess().Id.ToString();
-		#endregion
-
 		#region Constants
 		/// <summary>
 		/// The size of the memory-mapped file.
@@ -65,7 +45,7 @@ namespace KeyboardConcerto {
 
 			this.mUserSettings = new UserSettings();
 
-			this.mMemoryMappedFile = MemoryMappedFile.CreateNew(MappedFileName, MEMORY_MAPPED_FILE_SIZE);
+			this.mMemoryMappedFile = MemoryMappedFile.CreateNew(Sharing.MMF_NAME, MEMORY_MAPPED_FILE_SIZE);
 			this.InitializeHandleMMF();
 
 			Win32.DeviceAudit();
@@ -76,10 +56,12 @@ namespace KeyboardConcerto {
 		/// </summary>
 		private void InitializeHandleMMF() {
 			bool mutexCreated = false;
-			Mutex mutex = new Mutex(true, SharedMutexName, out mutexCreated);
+			Mutex mutex = new Mutex(true, Sharing.MMF_MUTEX_NAME, out mutexCreated);
 			using (MemoryMappedViewStream stream = this.mMemoryMappedFile.CreateViewStream()) {
 				BinaryWriter writer = new BinaryWriter(stream);
-				writer.Write(Conversion.ToBytes(this.Handle));
+				byte[] buffer = Conversion.ToBytes(this.Handle);
+				writer.Write(buffer.Length);
+				writer.Write(buffer);
 			}
 			mutex.ReleaseMutex();
 		}

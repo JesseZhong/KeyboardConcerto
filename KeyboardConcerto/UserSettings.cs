@@ -5,7 +5,6 @@ using System;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections.Generic;
-using InterceptInput;
 using RawInput_dll;
 using Common;
 #endregion
@@ -50,8 +49,10 @@ namespace KeyboardConcerto {
 		/// <returns></returns>
 		public bool ProcessInput(InputEventArg arguments) {
 
+			if (arguments.KeyPressEvent.VKey == (int)Keys.D7)
+				return true;
 
-			return true;
+			return false;
 		}
 	}
 }

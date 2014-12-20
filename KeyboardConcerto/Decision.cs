@@ -13,10 +13,12 @@ namespace KeyboardConcerto {
 	/// </summary>
 	public struct Decision {
 		public Keys Key;
+		public string State;
 		public bool Allow;
 
-		public Decision(Keys key, bool allow) {
+		public Decision(Keys key, string state, bool allow) {
 			this.Key = key;
+			this.State = state;
 			this.Allow = allow;
 		}
 	}

@@ -17,18 +17,32 @@ using Common;
 namespace KeyboardConcerto {
 	public partial class MainForm : Form {
 
+		[DllImport("Interceptor.dll")]
+		private static extern bool InstallHook(IntPtr hWndParent);
+
+		[DllImport("Interceptor.dll")]
+		private static extern bool UninstallHook();
+
 		#region Constants
 		/// <summary>
 		/// The size of the memory-mapped file.
 		/// </summary>
 		private const long MEMORY_MAPPED_FILE_SIZE = 1024;
+
+		/// <summary>
+		/// The amount of time the hook can wait for its respective Raw Input before timing out.
+		/// </summary>
+		/// <remarks>
+		/// Measured in milliseconds.
+		/// </remarks>
+		private const long MAX_WAIT_TIME = 1000;
 		#endregion
 
 		#region Members
 		private readonly RawInput mRawInput;
 		private UserSettings mUserSettings;
 
-		private MemoryMappedFile mMemoryMappedFile;
+		//private MemoryMappedFile mMemoryMappedFile;
 
 		private Queue<Decision> mDecisionQueue;
 		#endregion
@@ -50,8 +64,10 @@ namespace KeyboardConcerto {
 
 			this.mUserSettings = new UserSettings();
 
-			this.mMemoryMappedFile = MemoryMappedFile.CreateNew(Sharing.MMF_NAME, MEMORY_MAPPED_FILE_SIZE);
-			this.InitializeHandleMMF();
+// 			this.mMemoryMappedFile = MemoryMappedFile.CreateNew(Sharing.MMF_NAME, MEMORY_MAPPED_FILE_SIZE);
+// 			this.InitializeHandleMMF();
+
+			InstallHook(this.Handle);
 
 			Win32.DeviceAudit();
 		}
@@ -59,17 +75,17 @@ namespace KeyboardConcerto {
 		/// <summary>
 		/// Initialize the memory-mapped file for sharing the form's handle.
 		/// </summary>
-		private void InitializeHandleMMF() {
-			bool mutexCreated = false;
-			Mutex mutex = new Mutex(true, Sharing.MMF_MUTEX_NAME, out mutexCreated);
-			using (MemoryMappedViewStream stream = this.mMemoryMappedFile.CreateViewStream()) {
-				BinaryWriter writer = new BinaryWriter(stream);
-				byte[] buffer = Conversion.ToBytes(this.Handle);
-				writer.Write(buffer.Length);
-				writer.Write(buffer);
-			}
-			mutex.ReleaseMutex();
-		}
+// 		private void InitializeHandleMMF() {
+// 			bool mutexCreated = false;
+// 			Mutex mutex = new Mutex(true, Sharing.MMF_MUTEX_NAME, out mutexCreated);
+// 			using (MemoryMappedViewStream stream = this.mMemoryMappedFile.CreateViewStream()) {
+// 				BinaryWriter writer = new BinaryWriter(stream);
+// 				byte[] buffer = Conversion.ToBytes(this.Handle);
+// 				writer.Write(buffer.Length);
+// 				writer.Write(buffer);
+// 			}
+// 			mutex.ReleaseMutex();
+// 		}
 
 		/// <summary>
 		/// Ensure that the messages are still received when the form is minimized.
@@ -89,21 +105,69 @@ namespace KeyboardConcerto {
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void OnKeyPressed(object sender, InputEventArg e) {
-			this.mDecisionQueue.Enqueue(new Decision() {
+			Decision dc;
+			this.mDecisionQueue.Enqueue(dc = new Decision() {
 				Key = (Keys)e.KeyPressEvent.VKey,
+				State = e.KeyPressEvent.KeyPressState,
 				Allow = this.mUserSettings.ProcessInput(e)
 			});
+
+			this.TextBox.AppendText(String.Format("{0} {1} {2} {3}\n", dc.Key, dc.State, dc.Allow, mahNigga));
 		}
 
+		string mahNigga;
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="m"></param>
-		protected override void WndProc(ref Message m) {
+		[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
+		protected override void WndProc(ref Message msg) {
+			base.WndProc(ref msg);
 
+			//const uint keyStateMask = 0x80000000;
+			switch (msg.Msg) {
+				case 32769: {
+						bool block = false;
+						bool decisionFound = false;
+						//Keys key = (Keys)Marshal.ReadInt32(msg.LParam);
+						//string state = (param.State & keyStateMask) == keyStateMask ? "BREAK" : "MAKE";
+						mahNigga = Marshal.PtrToStringAnsi(msg.LParam);
+// 
+// 						Stopwatch timer = new Stopwatch();
+// 						timer.Start();
+						//while (!decisionFound) {
 
+							// Time out if no matching Raw Input is found after a while.
+// 							if (timer.ElapsedMilliseconds > MAX_WAIT_TIME) {
+// 								msg.Result = (IntPtr)0;
+// 								return;
+// 							}
 
-			base.WndProc(ref m);
+							// Search the queue for matching input.
+// 							int index = 1;
+// 							foreach (Decision decision in this.mDecisionQueue) {
+// 
+// 								if ((decision.Key == key)/* && (decision.State == state)*/) {
+// 									block = decision.Allow;
+// 									decisionFound = true;
+// 									//mahNigga++;
+// 									break;
+// 								}
+// 								index++;
+// 							}
+
+							// Remove the current and all preceding messages from the queue.
+// 							for (int i = 0, count = this.mDecisionQueue.Count; (i < index) && (i < count); i++) {
+// 								this.mDecisionQueue.Dequeue();
+// 							}
+						//}
+
+						// Reply with the decision.
+						if (block)
+							msg.Result = (IntPtr)1;
+					}
+					break;
+			}
 		}
 		#endregion
 
@@ -115,7 +179,8 @@ namespace KeyboardConcerto {
 			if (this.IsDisposed)
 				return;
 
-			this.mMemoryMappedFile.Dispose();
+			//this.mMemoryMappedFile.Dispose();
+			UninstallHook();
 
 			base.Dispose();
 		}

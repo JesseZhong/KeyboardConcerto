@@ -1,0 +1,21 @@
+[Implementation]
+Quote from "Combining Raw Input and keyboard Hook to selectively block input from multiple keyboards":
+http://www.codeproject.com/Articles/716591/Combining-Raw-Input-and-keyboard-Hook-to-selective
+	"Actually there's no secret behind. I have main application window that receives WM_INPUT messages 
+- as described in this article. Then there's DLL that hooks (globally - that's why I need dll) keyboard 
+messages. It uses memory mapped file to share handle of application window within DLL instances. The 
+trick comes when keyboard message is "trapped". The DLL sends user message to application (using the 
+handle and SendMessage) to ask whether this message should be blocked. The application knows what 
+device id + key came in last WM_INPUT message and based on this information it sets result of the 
+message. Back in DLL I either call CallNextHookEx to pass the keyboard message or just return 1 and 
+message is lost.
+	"I faced situation when DLL got the keyboard message first before my application processed WM_INPUT. 
+So before answering to DLL I have a look into application message queue with PeekMessage whether there's 
+some WM_INPUT pending and process it first. Now I work on mouse support which seems to be even more 
+challenging and during API study I think also keyboard can be improved. So later I might have some 
+better way - or at least better description if someone would be interested." 
+																				~ Petre Medek
+
+C++ Implementation Description and Example by Vit Blecha
+"Using Raw Input from C# to handle multiple keyboards"
+http://www.codeproject.com/Articles/17123/Using-Raw-Input-from-C-to-handle-multiple-keyboard?fid=375378&fr=226#xx0xx

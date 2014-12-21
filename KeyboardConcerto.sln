@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardConcerto", "KeyboardConcerto\KeyboardConcerto.csproj", "{BFDE571E-46DB-47C7-AB21-FE0425720DC1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CC8D040D-AC86-4CA1-8AC0-2C04DC22DECB} = {CC8D040D-AC86-4CA1-8AC0-2C04DC22DECB}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RawInput", "RawInput\RawInput.csproj", "{4143D085-38CF-4640-BB05-2FDFFAF94D76}"
 EndProject

@@ -134,34 +134,34 @@ namespace KeyboardConcerto {
 							RepeatCount = (short)(lparam & 0xFF)
 						};
 
-// 						Stopwatch timer = new Stopwatch();
-// 						timer.Start();
-						//while (!decisionFound) {
+						Stopwatch timer = new Stopwatch();
+						timer.Start();
+						while (!decisionFound) {
 
 							// Time out if no matching Raw Input is found after a while.
-// 							if (timer.ElapsedMilliseconds > MAX_WAIT_TIME) {
-// 								msg.Result = (IntPtr)0;
-// 								return;
-// 							}
+							if (timer.ElapsedMilliseconds > MAX_WAIT_TIME) {
+								msg.Result = (IntPtr)0;
+								timer.Stop();
+								return;
+							}
 
 							// Search the queue for matching input.
-// 							int index = 1;
-// 							foreach (Decision decision in this.mDecisionQueue) {
-// 
-// 								if ((decision.Key == key)/* && (decision.State == state)*/) {
-// 									block = decision.Allow;
-// 									decisionFound = true;
-// 									//mahNigga++;
-// 									break;
-// 								}
-// 								index++;
-// 							}
+							int index = 1;
+							foreach (Decision decision in this.mDecisionQueue) {
+
+								if ((decision.Key == hParams.Key) && (decision.State == hParams.State)) {
+									block = decision.Allow;
+									decisionFound = true;
+									break;
+								}
+								index++;
+							}
 
 							// Remove the current and all preceding messages from the queue.
-// 							for (int i = 0, count = this.mDecisionQueue.Count; (i < index) && (i < count); i++) {
-// 								this.mDecisionQueue.Dequeue();
-// 							}
-						//}
+							for (int i = 0, count = this.mDecisionQueue.Count; (i < index) && (i < count); i++) {
+								this.mDecisionQueue.Dequeue();
+							}
+						}
 
 						// Reply with the decision.
 						if (block)

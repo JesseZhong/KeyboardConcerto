@@ -1,0 +1,14 @@
+Diagram and Explanation
+http://msdn.microsoft.com/en-us/library/windows/desktop/ms646267(v=vs.85).aspx#_win32_Keystroke_Message_Flags
+
+Dereference pointer into long. On a 64bit system, the sequence is repeated.
+When deserializing, shift right as if on 32bit system. (only need the right sequence)
+
+G BREAK False [0] [0] [0] [0 000] [0] [0010 0010] [0000 0000 0000 0001] 
+              [0] [0] [0] [0 000] [0] [0010 0010] [0000 0000 0000 0001]
+F MAKE False  [1] [1] [0] [0 000] [0] [0010 0001] [0000 0000 0000 0001] 
+              [1] [1] [0] [0 000] [0] [0010 0001] [0000 0000 0000 0001
+]
+F BREAK False [0] [0] [0] [0 000] [0] [0010 0001] [0000 0000 0000 0001]
+              [0] [0] [0] [0 000] [0] [0010 0001] [0000 0000 0000 0001
+]

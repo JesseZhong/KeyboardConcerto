@@ -23,6 +23,15 @@ namespace KeyboardConcerto {
 		[DllImport("Interceptor.dll")]
 		private static extern bool UninstallHook();
 
+		public struct HookParams {
+			public string State;
+			public string PrevState;
+			public string AltState;
+			public bool ExtendedKey;
+			public short ScanCode;
+			public short RepeatCount;
+		}
+
 		#region Constants
 		/// <summary>
 		/// The size of the memory-mapped file.
@@ -112,26 +121,47 @@ namespace KeyboardConcerto {
 				Allow = this.mUserSettings.ProcessInput(e)
 			});
 
-			this.TextBox.AppendText(String.Format("{0} {1} {2} {3}\n", dc.Key, dc.State, dc.Allow, mahNigga));
+			//this.TextBox.AppendText(String.Format("{0} {1} {2} {3} {4} {5}\n", dc.Key, dc.State, dc.Allow, silliness, stk.State, stk.PrevState));
+			this.TextBox.AppendText(String.Format("{0} {1} {2} {3}\n", dc.Key, dc.State, dc.Allow, sacred));
+
+			string name = "./output.txt";
+			if (!File.Exists(name)) {
+				using (File.Create(name)) {
+
+				}
+			}
+			using (StreamWriter file = new StreamWriter(name, true)) {
+				file.WriteLine(String.Format("{0} {1} {2} {3}\n", dc.Key, dc.State, dc.Allow, sacred));
+			}
 		}
 
-		string mahNigga;
+		uint silliness;
+		//HookParams stk;
+		string sacred;
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="m"></param>
 		[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
 		protected override void WndProc(ref Message msg) {
+			const string makeStr = "MAKE";
+			const string breakStr = "BREAK";
+
 			base.WndProc(ref msg);
 
 			//const uint keyStateMask = 0x80000000;
-			switch (msg.Msg) {
+			switch (msg.Msg) {  
 				case 32769: {
 						bool block = false;
 						bool decisionFound = false;
 						//Keys key = (Keys)Marshal.ReadInt32(msg.LParam);
 						//string state = (param.State & keyStateMask) == keyStateMask ? "BREAK" : "MAKE";
-						mahNigga = Marshal.PtrToStringAnsi(msg.LParam);
+						silliness = (uint)msg.WParam;
+						long lparam = (long)msg.LParam;
+						sacred = GetIntBinaryString(lparam);
+// 						stk = new HookParams() {
+// 							State = lparam >>
+// 						};
 // 
 // 						Stopwatch timer = new Stopwatch();
 // 						timer.Start();
@@ -168,6 +198,23 @@ namespace KeyboardConcerto {
 					}
 					break;
 			}
+		}
+
+		static string GetIntBinaryString(long n) {
+			char[] b = new char[64];
+			int pos = 63;
+			int i = 0;
+
+			while (i < 64) {
+				if ((n & (1 << i)) != 0) {
+					b[pos] = '1';
+				} else {
+					b[pos] = '0';
+				}
+				pos--;
+				i++;
+			}
+			return new string(b);
 		}
 		#endregion
 

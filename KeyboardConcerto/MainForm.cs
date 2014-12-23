@@ -19,21 +19,31 @@ namespace KeyboardConcerto {
 
 		#region Constants
 		/// <summary>
-		/// The size of the memory-mapped file.
-		/// </summary>
-		private const long MEMORY_MAPPED_FILE_SIZE = 1024;
-
-		/// <summary>
 		/// The amount of time the hook can wait for its respective Raw Input before timing out.
 		/// </summary>
 		/// <remarks>
 		/// Measured in milliseconds.
 		/// </remarks>
-		private const long MAX_WAIT_TIME = 110;
+		private const long MAX_WAIT_TIME = 60;
 		#endregion
 
 		#region Members
-		private readonly RawInput mRawInput;
+		private class PreMessageFilter : IMessageFilter {
+			public bool PreFilterMessage(ref Message m) {
+				if (m.Msg != WM_INPUT) {
+					// Allow any non WM_INPUT message to pass through
+					return false;
+				}
+
+				return mKeyboardDriver.ProcessRawInput(m.LParam);
+			}
+		}
+
+		private static RawKeyboard mKeyboardDriver;
+		private readonly IntPtr mDeviceNotifyHandle;
+		private static readonly Guid mDeviceInterfaceHID = new Guid("4D1E55B2-F16F-11CF-88CB-001111000030");
+		private PreMessageFilter mFilter;
+
 		private UserSettings mUserSettings;
 
 		private Queue<Decision> mDecisionQueue;
@@ -49,16 +59,50 @@ namespace KeyboardConcerto {
 			AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
 			IntPtr accessHandle = this.Handle; // Ensure that the handle is created.
 
-			this.mRawInput = new RawInput(this.Handle);
-			this.mRawInput.CaptureOnlyIfTopMostWindow = false;
-			this.mRawInput.AddMessageFilter();
-			this.mRawInput.KeyPressed += this.OnKeyPressed;
+			mKeyboardDriver = new RawKeyboard(this.Handle);
+			mKeyboardDriver.EnumerateDevices();
+			mKeyboardDriver.CaptureOnlyIfTopMostWindow = false;
+			mDeviceNotifyHandle = RegisterForDeviceNotifications(this.Handle);
+			Application.AddMessageFilter(this.mFilter = new PreMessageFilter());
+			mKeyboardDriver.KeyPressed += OnKeyPressed;
 
 			this.mUserSettings = new UserSettings();
 
 			InstallHook(this.Handle);
 
 			Win32.DeviceAudit();
+		}
+
+		struct BroadcastDeviceInterface {
+			public Int32 dbcc_size;
+			public BroadcastDeviceType BroadcastDeviceType;
+			public Guid dbcc_classguid;
+		}
+
+		static IntPtr RegisterForDeviceNotifications(IntPtr parent) {
+			var usbNotifyHandle = IntPtr.Zero;
+			var bdi = new BroadcastDeviceInterface();
+			bdi.dbcc_size = Marshal.SizeOf(bdi);
+			bdi.BroadcastDeviceType = BroadcastDeviceType.DBT_DEVTYP_DEVICEINTERFACE;
+			bdi.dbcc_classguid = mDeviceInterfaceHID;
+
+			var mem = IntPtr.Zero;
+			try {
+				mem = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(BroadcastDeviceInterface)));
+				Marshal.StructureToPtr(bdi, mem, false);
+				usbNotifyHandle = RegisterDeviceNotification(parent, mem, DeviceNotification.DEVICE_NOTIFY_WINDOW_HANDLE);
+			} catch (Exception e) {
+				Debug.Print("Registration for device notifications Failed. Error: {0}", Marshal.GetLastWin32Error());
+				Debug.Print(e.StackTrace);
+			} finally {
+				Marshal.FreeHGlobal(mem);
+			}
+
+			if (usbNotifyHandle == IntPtr.Zero) {
+				Debug.Print("Registration for device notifications Failed. Error: {0}", Marshal.GetLastWin32Error());
+			}
+
+			return usbNotifyHandle;
 		}
 
 		/// <summary>
@@ -98,40 +142,57 @@ namespace KeyboardConcerto {
 
 			base.WndProc(ref msg);
 
-			if (msg.Msg == 32769) {
-				long lparam = (long)msg.LParam;
-				HookParams hParams = new HookParams() {
-					Key = (Keys)(uint)msg.WParam,
-					State = ((lparam >> 31 & 0x1) == 1) ? breakStr : makeStr,		// WM_DOWN is 0; WM_UP is 1
-					PrevState = ((lparam >> 30 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0 (super confusing)
-					AltState = ((lparam >> 29 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0
-					ExtendedKey = (lparam >> 24 & 0x1) == 1,
-					ScanCode = (byte)(lparam >> 16 & 0xF),
-					RepeatCount = (short)(lparam & 0xFF)
-				};
-
-				Stopwatch timer = new Stopwatch();
-				timer.Start();
-				while (true) {
-
-					// Time out if no matching Raw Input is found after a while.
-					if (timer.ElapsedMilliseconds > MAX_WAIT_TIME) {
-						msg.Result = (IntPtr)0;
-						timer.Stop();
-						return;
+			switch (msg.Msg) {
+				case WM_INPUT: {
+						// Should never get here if you are using PreMessageFiltering
+						mKeyboardDriver.ProcessRawInput(msg.LParam);
 					}
+					return;
 
-					// Search if there's a corresponding raw input decision.
-					// Remove the current and all preceding messages from the queue.
-					for (int i = 0, count = this.mDecisionQueue.Count; i < count; i++) {
-						Decision decision = this.mDecisionQueue.Dequeue();
-						if ((decision.Key == hParams.Key) && (decision.State == hParams.State)) {
-							msg.Result = decision.Allow ? (IntPtr)0 : (IntPtr)1;
-							return;
+				case WM_USB_DEVICECHANGE: {
+						Debug.WriteLine("USB Device Arrival / Removal");
+						mKeyboardDriver.EnumerateDevices();
+					}
+					return;
+
+				case WM_HOOK: {
+						long lparam = (long)msg.LParam;
+						HookParams hParams = new HookParams() {
+							Key = (Keys)(uint)msg.WParam,
+							State = ((lparam >> 31 & 0x1) == 1) ? breakStr : makeStr,		// WM_DOWN is 0; WM_UP is 1
+							PrevState = ((lparam >> 30 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0 (super confusing)
+							AltState = ((lparam >> 29 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0
+							ExtendedKey = (lparam >> 24 & 0x1) == 1,
+							ScanCode = (byte)(lparam >> 16 & 0xF),
+							RepeatCount = (short)(lparam & 0xFF)
+						};
+
+						Stopwatch timer = new Stopwatch();
+						timer.Start();
+						while (true) {
+
+							// Time out if no matching Raw Input is found after a while.
+							if (timer.ElapsedMilliseconds > MAX_WAIT_TIME) {
+								msg.Result = (IntPtr)0;
+								timer.Stop();
+								return;
+							}
+
+							// Search if there's a corresponding raw input decision.
+							// Remove the current and all preceding messages from the queue.
+							for (int i = 0, count = this.mDecisionQueue.Count; i < count; i++) {
+								Decision decision = this.mDecisionQueue.Dequeue();
+								if ((decision.Key == hParams.Key) && (decision.State == hParams.State)) {
+									msg.Result = decision.Allow ? (IntPtr)0 : (IntPtr)1;
+									return;
+								}
+							}
 						}
 					}
-				}
-			}	
+
+				default:
+					return;
+			}
 		}
 		#endregion
 
@@ -143,6 +204,7 @@ namespace KeyboardConcerto {
 			if (this.IsDisposed)
 				return;
 
+			UnregisterDeviceNotification(mDeviceNotifyHandle);
 			UninstallHook();
 
 			base.Dispose();
@@ -180,12 +242,44 @@ namespace KeyboardConcerto {
 		static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 		#endregion
 
-		#region Hooking
-		[DllImport("Interceptor.dll")]
-		private static extern bool InstallHook(IntPtr hWndParent);
+		#region Raw Input
+		private const int WM_INPUT = 0x00FF;
+		private const int WM_USB_DEVICECHANGE = 0x0219;
 
-		[DllImport("Interceptor.dll")]
-		private static extern bool UninstallHook();
+		enum BroadcastDeviceType {
+			DBT_DEVTYP_OEM = 0,
+			DBT_DEVTYP_DEVNODE = 1,
+			DBT_DEVTYP_VOLUME = 2,
+			DBT_DEVTYP_PORT = 3,
+			DBT_DEVTYP_NET = 4,
+			DBT_DEVTYP_DEVICEINTERFACE = 5,
+			DBT_DEVTYP_HANDLE = 6,
+		}
+
+		enum DeviceNotification {
+			/// <summary>The hRecipient parameter is a window handle.</summary>
+			DEVICE_NOTIFY_WINDOW_HANDLE = 0x00000000,
+			/// <summary>The hRecipient parameter is a service status handle.</summary>
+			DEVICE_NOTIFY_SERVICE_HANDLE = 0x00000001,
+			/// <summary>
+			/// Notifies the recipient of device interface events for all device interface classes. (The dbcc_classguid member is ignored.)
+			/// This value can be used only if the dbch_devicetype member is DBT_DEVTYP_DEVICEINTERFACE.
+			///</summary>
+			DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 0x00000004
+		}
+
+		[DllImport("user32.dll", SetLastError = true)]
+		private static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr notificationFilter, DeviceNotification flags);
+
+		[DllImport("user32.dll", SetLastError = true)]
+		private static extern bool UnregisterDeviceNotification(IntPtr handle);
+		#endregion
+
+		#region Hooking
+		/// <summary>
+		/// Global keyboard hook.
+		/// </summary>
+		private const int WM_HOOK = 0x8001;
 
 		/// <summary>
 		/// Structure used to deserialize hooking messages for WH_KEYBOARD.
@@ -199,6 +293,12 @@ namespace KeyboardConcerto {
 			public byte ScanCode;
 			public short RepeatCount;
 		}
+
+		[DllImport("Interceptor.dll")]
+		private static extern bool InstallHook(IntPtr hWndParent);
+
+		[DllImport("Interceptor.dll")]
+		private static extern bool UninstallHook();
 		#endregion
 	}
 }

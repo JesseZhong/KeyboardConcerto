@@ -1,7 +1,5 @@
-
 #include "stdafx.h"
 #include <stdio.h>
-#include <iostream>
 #include "Interceptor.h"
 
 #pragma data_seg (".SHARED")
@@ -35,9 +33,7 @@ LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
 	}
 
 	// Report the event to the main window. If the return value is 1, block the input; otherwise pass it along the Hook Chain
-	int val = 0;
-	if (val = SendMessage(hwndServer, WM_HOOK, wParam, lParam)) {
-		std::cout << (int)val << std::endl;
+	if (SendMessage(hwndServer, WM_HOOK, wParam, lParam)) {
 		return 1;
 	}
 
@@ -73,8 +69,4 @@ BOOL UninstallHook() {
 	hwndServer = NULL;
 	hookHandle = NULL;
 	return true;
-}
-
-LRESULT WindowProcess(UINT message, WPARAM wParam, LPARAM lParam) {
-
 }

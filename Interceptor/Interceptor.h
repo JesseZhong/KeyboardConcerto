@@ -1,5 +1,3 @@
-
-
 #ifdef INTERCEPTOR_EXPORTS
 #define INTERCEPTOR_API extern "C" __declspec(dllexport)
 #else
@@ -8,4 +6,4 @@
 
 INTERCEPTOR_API BOOL InstallHook (HWND hwndParent);
 
-INTERCEPTOR_API BOOL UninstallHook ();
+INTERCEPTOR_API BOOL UninstallHook();

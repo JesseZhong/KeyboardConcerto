@@ -5,8 +5,7 @@ using System;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections.Generic;
-using RawInput_dll;
-using Common;
+using KeyboardConcerto.RawInput;
 #endregion
 
 namespace KeyboardConcerto {
@@ -47,9 +46,9 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <param name="arguments"></param>
 		/// <returns></returns>
-		public bool ProcessInput(InputEventArg arguments) {
+		public bool ProcessInput(KeyPressEvent keyPressEvent) {
 
-			if (arguments.KeyPressEvent.VKey == (int)Keys.D7)
+			if (keyPressEvent.VKey == (int)Keys.D7)
 				return true;
 
 			return false;

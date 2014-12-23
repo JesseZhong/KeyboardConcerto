@@ -45,9 +45,9 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <param name="arguments"></param>
 		/// <returns></returns>
-		public bool ProcessInput(InputEventArg arguments) {
+		public bool ProcessInput(KeyPressEvent keyPressEvent) {
 
-			if (arguments.KeyPressEvent.VKey == (int)Keys.D7)
+			if (keyPressEvent.VKey == (int)Keys.D7)
 				return true;
 
 			return false;

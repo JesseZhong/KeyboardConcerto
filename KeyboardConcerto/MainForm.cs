@@ -26,17 +26,6 @@ namespace KeyboardConcerto {
 		#endregion
 
 		#region Members
-		private class PreMessageFilter : IMessageFilter {
-			public bool PreFilterMessage(ref Message m) {
-				if (m.Msg != Win32.WM_INPUT) {
-					// Allow any non WM_INPUT message to pass through
-					return false;
-				}
-
-				return mKeyboardDriver.ProcessRawInput(m.LParam);
-			}
-		}
-
 		private static RawKeyboard mKeyboardDriver;
 		private readonly IntPtr mDeviceNotifyHandle;
 		private static readonly Guid mDeviceInterfaceHID = new Guid("4D1E55B2-F16F-11CF-88CB-001111000030");
@@ -44,7 +33,7 @@ namespace KeyboardConcerto {
 
 		private UserSettings mUserSettings;
 
-		private Queue<Decision> mDecisionQueue;
+		private Deque<Decision> mDecisionQueue;
 		#endregion
 
 		#region Initialization
@@ -53,7 +42,7 @@ namespace KeyboardConcerto {
 		/// </summary>
 		public MainForm() {
 			this.InitializeComponent();
-			this.mDecisionQueue = new Queue<Decision>();
+			this.mDecisionQueue = new Deque<Decision>();
 			AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
 			IntPtr accessHandle = this.Handle; // Ensure that the handle is created.
 
@@ -61,8 +50,7 @@ namespace KeyboardConcerto {
 			mKeyboardDriver.EnumerateDevices();
 			mKeyboardDriver.CaptureOnlyIfTopMostWindow = false;
 			mDeviceNotifyHandle = RegisterForDeviceNotifications(this.Handle);
-			Application.AddMessageFilter(this.mFilter = new PreMessageFilter());
-			mKeyboardDriver.KeyPressed += OnKeyPressed;
+			Application.AddMessageFilter(this.mFilter = new PreMessageFilter(this.ProcessKeyboard));
 
 			this.mUserSettings = new UserSettings();
 
@@ -107,19 +95,42 @@ namespace KeyboardConcerto {
 			SetParent(this.Handle, HWND_MESSAGE);
 		}
 		#endregion
-
+		
 		#region Keyboard Handling
 		/// <summary>
-		/// Processes the input and enqueues the decision to be executed later.
+		/// 
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void OnKeyPressed(object sender, InputEventArg e) {
-			this.mDecisionQueue.Enqueue(new Decision() {
-				Key = (Keys)e.KeyPressEvent.VKey,
-				State = e.KeyPressEvent.KeyPressState,
-				Allow = !this.mUserSettings.ProcessInput(e)
+		/// <param name="keyPressEvent"></param>
+		private void ProcessKeyboard(KeyPressEvent keyPressEvent) {
+			this.mDecisionQueue.AddToBack(new Decision() {
+				Key = (Keys)keyPressEvent.VKey,
+				State = keyPressEvent.KeyPressState,
+				Allow = !this.mUserSettings.ProcessInput(keyPressEvent)
 			});
+		}
+
+		private class PreMessageFilter : IMessageFilter {
+
+			public delegate void ProcessKeyboard(KeyPressEvent keyPressEvent);
+			private ProcessKeyboard mProcessKeyboard;
+
+			public PreMessageFilter(ProcessKeyboard processKeyboard) {
+				this.mProcessKeyboard = processKeyboard;
+			}
+
+			public bool PreFilterMessage(ref Message msg) {
+				if (msg.Msg != Win32.WM_INPUT) {
+					// Allow any non WM_INPUT message to pass through
+					return false;
+				}
+				KeyPressEvent keyPressEvent;
+				bool result = mKeyboardDriver.ProcessRawInput(msg.LParam, out keyPressEvent);
+				if (mKeyboardDriver.ProcessRawInput(msg.LParam, out keyPressEvent)) {
+					if (this.mProcessKeyboard != null)
+						this.mProcessKeyboard(keyPressEvent);
+				}
+				return result;
+			}
 		}
 
 		/// <summary>
@@ -128,54 +139,69 @@ namespace KeyboardConcerto {
 		/// <param name="m"></param>
 		[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
 		protected override void WndProc(ref Message msg) {
-			const string makeStr = "MAKE";
-			const string breakStr = "BREAK";
-
 			base.WndProc(ref msg);
 
 			switch (msg.Msg) {
 				case Win32.WM_INPUT: {
 						// Should never get here if you are using PreMessageFiltering
-						mKeyboardDriver.ProcessRawInput(msg.LParam);
+						KeyPressEvent keyPressEvent;
+						if (mKeyboardDriver.ProcessRawInput(msg.LParam, out keyPressEvent)) {
+							this.ProcessKeyboard(keyPressEvent);
+						}
+						return;
 					}
-					return;
 
 				case Win32.WM_USB_DEVICECHANGE: {
 						Debug.WriteLine("USB Device Arrival / Removal");
 						mKeyboardDriver.EnumerateDevices();
+						return;
 					}
-					return;
 
 				case WM_HOOK: {
+						const string makeStr = "MAKE";
+						const string breakStr = "BREAK";
 						long lparam = (long)msg.LParam;
-						HookParams hParams = new HookParams() {
-							Key = (Keys)(uint)msg.WParam,
-							State = ((lparam >> 31 & 0x1) == 1) ? breakStr : makeStr,		// WM_DOWN is 0; WM_UP is 1
-							PrevState = ((lparam >> 30 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0 (super confusing)
-							AltState = ((lparam >> 29 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0
-							ExtendedKey = (lparam >> 24 & 0x1) == 1,
-							ScanCode = (byte)(lparam >> 16 & 0xF),
-							RepeatCount = (short)(lparam & 0xFF)
-						};
 
-						Stopwatch timer = new Stopwatch();
-						timer.Start();
-						while (true) {
+						Keys key = (Keys)(uint)msg.WParam;
+						string state = ((lparam >> 31 & 0x1) == 1) ? breakStr : makeStr;		// WM_DOWN is 0; WM_UP is 1
 
-							// Time out if no matching Raw Input is found after a while.
-							if (timer.ElapsedMilliseconds > MAX_WAIT_TIME) {
-								msg.Result = (IntPtr)0;
-								timer.Stop();
+						// Search if there's a corresponding raw input decision.
+						// Remove the current and all preceding messages from the queue.
+						for (int i = 0, count = this.mDecisionQueue.Count; i < count; i++) {
+							Decision decision = this.mDecisionQueue.RemoveFromFront();
+							if ((decision.Key == key) && (decision.State == state)) {
+								msg.Result = decision.Allow ? (IntPtr)0 : (IntPtr)1;
 								return;
 							}
+						}
 
-							// Search if there's a corresponding raw input decision.
-							// Remove the current and all preceding messages from the queue.
-							for (int i = 0, count = this.mDecisionQueue.Count; i < count; i++) {
-								Decision decision = this.mDecisionQueue.Dequeue();
-								if ((decision.Key == hParams.Key) && (decision.State == hParams.State)) {
-									msg.Result = decision.Allow ? (IntPtr)0 : (IntPtr)1;
+						Stopwatch sw = new Stopwatch();
+						sw.Start();
+						while (true) {
+							Message rawMsg = new Message();
+							while (!Win32.PeekMessage(ref rawMsg, this.Handle, Win32.WM_INPUT, Win32.WM_INPUT, Win32.PM_REMOVE)) {
+								if (MAX_WAIT_TIME < sw.ElapsedMilliseconds) {
+									sw.Stop();
 									return;
+								}
+							}
+
+							KeyPressEvent keyPressEvent;
+							if (mKeyboardDriver.ProcessRawInput(rawMsg.LParam, out keyPressEvent)) {
+								Keys riKey = (Keys)keyPressEvent.VKey;
+								string riState = keyPressEvent.KeyPressState;
+								bool riAllow = !this.mUserSettings.ProcessInput(keyPressEvent);
+
+								if ((riKey == key) && (riState == state)) {
+									msg.Result = riAllow ? (IntPtr)0 : (IntPtr)1;
+									sw.Stop();
+									return;
+								} else {
+									this.mDecisionQueue.AddToBack(new Decision() {
+										Key = riKey,
+										State = riState,
+										Allow = riAllow
+									});
 								}
 							}
 						}
@@ -238,19 +264,6 @@ namespace KeyboardConcerto {
 		/// Global keyboard hook.
 		/// </summary>
 		private const int WM_HOOK = 0x8001;
-
-		/// <summary>
-		/// Structure used to deserialize hooking messages for WH_KEYBOARD.
-		/// </summary>
-		private struct HookParams {
-			public Keys Key;
-			public string State;
-			public string PrevState;
-			public string AltState;
-			public bool ExtendedKey;
-			public byte ScanCode;
-			public short RepeatCount;
-		}
 
 		[DllImport("Interceptor.dll")]
 		private static extern bool InstallHook(IntPtr hWndParent);

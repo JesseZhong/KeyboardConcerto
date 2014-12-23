@@ -98,11 +98,11 @@ namespace KeyboardConcerto {
 			throw new Win32Exception(Marshal.GetLastWin32Error());
 		}
 
-		public bool ProcessRawInput(IntPtr hdevice) {
+		public bool ProcessRawInput(IntPtr hdevice, out KeyPressEvent keyPressEvent) {
 			//Debug.WriteLine(_rawBuffer.data.keyboard.ToString());
 			//Debug.WriteLine(_rawBuffer.data.hid.ToString());
 			//Debug.WriteLine(_rawBuffer.header.ToString());
-
+			keyPressEvent = null;
 			if (_deviceList.Count == 0) return false;
 			if (CaptureOnlyIfTopMostWindow && !Win32.InputInForeground(_rawBuffer.header.wParam)) return false;
 
@@ -122,7 +122,7 @@ namespace KeyboardConcerto {
 
 			var isE0BitSet = ((flags & Win32.RI_KEY_E0) != 0);
 
-			KeyPressEvent keyPressEvent;
+			keyPressEvent = new KeyPressEvent();
 
 			if (_deviceList.ContainsKey(_rawBuffer.header.hDevice)) {
 				lock (_padLock) {

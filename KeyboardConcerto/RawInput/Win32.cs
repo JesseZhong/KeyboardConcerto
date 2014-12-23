@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Forms;
 using System.Globalization;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -59,6 +60,10 @@ namespace KeyboardConcerto {
 		internal const int SC_SHIFT_L = 0x2a;
 		internal const int RIM_INPUT = 0x00;
 
+		internal const int PM_NOREMOVE = 0x0000;
+		internal const int PM_REMOVE = 0x0001;
+		internal const int PM_NOYIELD = 0x0002;
+
 		[DllImport("User32.dll", SetLastError = true)]
 		internal static extern int GetRawInputData(IntPtr hRawInput, DataCommand command, [Out] out InputData buffer, [In, Out] ref int size, int cbSizeHeader);
 
@@ -83,6 +88,9 @@ namespace KeyboardConcerto {
 
 		[DllImport("user32.dll", SetLastError = true)]
 		internal static extern bool UnregisterDeviceNotification(IntPtr handle);
+
+		[DllImport("user32.dll", SetLastError = true)]
+		internal static extern bool PeekMessage(ref Message lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
 
 		public static void DeviceAudit() {
 			var file = new FileStream("DeviceAudit.txt", FileMode.Create, FileAccess.Write);

@@ -75,6 +75,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Deque.cs" />
     <Compile Include="RawInput\DataStructures.cs" />
     <Compile Include="Decision.cs" />
     <Compile Include="ExecCommand.cs" />

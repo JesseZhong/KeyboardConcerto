@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace KeyboardConcerto {
+namespace KeyboardConcerto.RawInput {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct DeviceInfo {
 		[FieldOffset(0)]

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KeyboardConcerto {
+namespace KeyboardConcerto.RawInput {
 	public class KeyPressEvent {
 		public string DeviceName;       // i.e. \\?\HID#VID_045E&PID_00DD&MI_00#8&1eb402&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}
 		public string DeviceType;       // KEYBOARD or HID

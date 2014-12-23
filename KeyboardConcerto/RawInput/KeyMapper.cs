@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Forms;
 
-namespace KeyboardConcerto {
+namespace KeyboardConcerto.RawInput {
 	internal enum VirtualKeys : short {
 
 	}

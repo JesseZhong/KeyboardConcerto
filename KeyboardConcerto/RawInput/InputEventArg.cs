@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KeyboardConcerto {
+namespace KeyboardConcerto.RawInput {
 	public class InputEventArg : EventArgs {
 		public InputEventArg(KeyPressEvent arg) {
 			KeyPressEvent = arg;

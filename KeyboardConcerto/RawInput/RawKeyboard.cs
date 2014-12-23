@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace KeyboardConcerto {
+namespace KeyboardConcerto.RawInput {
 	public sealed class RawKeyboard {
 		private readonly Dictionary<IntPtr, KeyPressEvent> _deviceList = new Dictionary<IntPtr, KeyPressEvent>();
 		public delegate void DeviceEventHandler(object sender, InputEventArg e);

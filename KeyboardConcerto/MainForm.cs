@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
+using KeyboardConcerto.RawInput;
 #endregion
 
 namespace KeyboardConcerto {
@@ -101,7 +102,7 @@ namespace KeyboardConcerto {
 		}
 		#endregion
 		
-		#region Keyboard Handling
+		#region Keyboard Processing
 		/// <summary>
 		/// Tests raw input and stores the result to be applied later.
 		/// </summary>
@@ -230,6 +231,18 @@ namespace KeyboardConcerto {
 		}
 		#endregion
 
+		#region Program Entry Point
+		/// <summary>
+		/// The main entry point for the application.
+		/// </summary>
+		[STAThread]
+		public static void Main() {
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			Application.Run(new MainForm());
+		}
+		#endregion
+
 		#region Managing Resources
 		/// <summary>
 		/// Release unmanaged resources.
@@ -242,18 +255,6 @@ namespace KeyboardConcerto {
 			UninstallHook();
 
 			base.Dispose();
-		}
-		#endregion
-
-		#region Program Entry Point
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		public static void Main() {
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainForm());
 		}
 		#endregion
 

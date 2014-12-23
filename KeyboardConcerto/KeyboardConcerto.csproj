@@ -78,11 +78,11 @@
     <Compile Include="Deque.cs" />
     <Compile Include="RawInput\DataStructures.cs" />
     <Compile Include="Decision.cs" />
-    <Compile Include="ExecCommand.cs" />
-    <Compile Include="ExecNode.cs" />
-    <Compile Include="ExecTimer.cs" />
-    <Compile Include="ExecVKey.cs" />
-    <Compile Include="KeyboardMacros.cs" />
+    <Compile Include="Keyboard\ExecutionSequence\ExecCommand.cs" />
+    <Compile Include="Keyboard\ExecutionSequence\ExecNode.cs" />
+    <Compile Include="Keyboard\ExecutionSequence\ExecTimer.cs" />
+    <Compile Include="Keyboard\ExecutionSequence\ExecVKey.cs" />
+    <Compile Include="Keyboard\KeyboardMacros.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,7 +90,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="KeyMacro.cs" />
+    <Compile Include="Keyboard\KeyMacro.cs" />
     <Compile Include="RawInput\Enumerations.cs" />
     <Compile Include="RawInput\InputEventArg.cs" />
     <Compile Include="RawInput\KeyMapper.cs" />
@@ -125,7 +125,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Items.txt" />
+    <Content Include="Notes\LParamBreakdown.txt" />
+    <Content Include="Notes\Items.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,7 +5,7 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace KeyboardConcerto {
+namespace KeyboardConcerto.RawInput {
 	static public class Win32 {
 		public static int LoWord(int dwValue) {
 			return (dwValue & 0xFFFF);

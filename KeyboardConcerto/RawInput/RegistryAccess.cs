@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
 
-namespace KeyboardConcerto {
+namespace KeyboardConcerto.RawInput {
 	static internal class RegistryAccess {
 		static internal RegistryKey GetDeviceKey(string device) {
 			var split = device.Substring(4).Split('#');

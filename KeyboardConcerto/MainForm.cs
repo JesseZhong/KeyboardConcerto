@@ -59,6 +59,11 @@ namespace KeyboardConcerto {
 			Win32.DeviceAudit();
 		}
 
+		/// <summary>
+		/// Registers window handle for device notifications.
+		/// </summary>
+		/// <param name="parent">Window handle.</param>
+		/// <returns></returns>
 		static IntPtr RegisterForDeviceNotifications(IntPtr parent) {
 			var usbNotifyHandle = IntPtr.Zero;
 			var bdi = new BroadcastDeviceInterface();
@@ -98,9 +103,9 @@ namespace KeyboardConcerto {
 		
 		#region Keyboard Handling
 		/// <summary>
-		/// 
+		/// Tests raw input and stores the result to be applied later.
 		/// </summary>
-		/// <param name="keyPressEvent"></param>
+		/// <param name="keyPressEvent">Raw input event.</param>
 		private void ProcessKeyboard(KeyPressEvent keyPressEvent) {
 			this.mDecisionQueue.AddToBack(new Decision() {
 				Key = (Keys)keyPressEvent.VKey,
@@ -109,15 +114,27 @@ namespace KeyboardConcerto {
 			});
 		}
 
+		/// <summary>
+		/// Pre-filters windows messages for WM_INPUT/raw input.
+		/// </summary>
 		private class PreMessageFilter : IMessageFilter {
 
 			public delegate void ProcessKeyboard(KeyPressEvent keyPressEvent);
 			private ProcessKeyboard mProcessKeyboard;
 
+			/// <summary>
+			/// Initializes the filter with the keyboard processing method.
+			/// </summary>
+			/// <param name="processKeyboard">Raw input process method.</param>
 			public PreMessageFilter(ProcessKeyboard processKeyboard) {
 				this.mProcessKeyboard = processKeyboard;
 			}
 
+			/// <summary>
+			/// Pre-filters message for raw input and processes it.
+			/// </summary>
+			/// <param name="msg">Message that needs processing.</param>
+			/// <returns>True if the message is a WM_INPUT message.</returns>
 			public bool PreFilterMessage(ref Message msg) {
 				if (msg.Msg != Win32.WM_INPUT) {
 					// Allow any non WM_INPUT message to pass through
@@ -134,9 +151,9 @@ namespace KeyboardConcerto {
 		}
 
 		/// <summary>
-		/// 
+		/// Processes and intercepts user input.
 		/// </summary>
-		/// <param name="m"></param>
+		/// <param name="msg">Windows message.</param>
 		[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
 		protected override void WndProc(ref Message msg) {
 			base.WndProc(ref msg);

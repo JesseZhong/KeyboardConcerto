@@ -29,7 +29,7 @@ namespace KeyboardConcerto {
 		/// <remarks>
 		/// Measured in milliseconds.
 		/// </remarks>
-		private const long MAX_WAIT_TIME = 110;
+		private const long MAX_WAIT_TIME = 60;
 		#endregion
 
 		#region Members

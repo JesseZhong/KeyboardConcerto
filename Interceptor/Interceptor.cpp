@@ -74,3 +74,7 @@ BOOL UninstallHook() {
 	hookHandle = NULL;
 	return true;
 }
+
+LRESULT WindowProcess(UINT message, WPARAM wParam, LPARAM lParam) {
+
+}

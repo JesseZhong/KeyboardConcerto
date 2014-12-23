@@ -29,14 +29,12 @@ namespace KeyboardConcerto {
 		/// <remarks>
 		/// Measured in milliseconds.
 		/// </remarks>
-		private const long MAX_WAIT_TIME = 1000;
+		private const long MAX_WAIT_TIME = 110;
 		#endregion
 
 		#region Members
 		private readonly RawInput mRawInput;
 		private UserSettings mUserSettings;
-
-		//private MemoryMappedFile mMemoryMappedFile;
 
 		private Queue<Decision> mDecisionQueue;
 		#endregion
@@ -58,28 +56,10 @@ namespace KeyboardConcerto {
 
 			this.mUserSettings = new UserSettings();
 
-// 			this.mMemoryMappedFile = MemoryMappedFile.CreateNew(Sharing.MMF_NAME, MEMORY_MAPPED_FILE_SIZE);
-// 			this.InitializeHandleMMF();
-
 			InstallHook(this.Handle);
 
 			Win32.DeviceAudit();
 		}
-
-		/// <summary>
-		/// Initialize the memory-mapped file for sharing the form's handle.
-		/// </summary>
-// 		private void InitializeHandleMMF() {
-// 			bool mutexCreated = false;
-// 			Mutex mutex = new Mutex(true, Sharing.MMF_MUTEX_NAME, out mutexCreated);
-// 			using (MemoryMappedViewStream stream = this.mMemoryMappedFile.CreateViewStream()) {
-// 				BinaryWriter writer = new BinaryWriter(stream);
-// 				byte[] buffer = Conversion.ToBytes(this.Handle);
-// 				writer.Write(buffer.Length);
-// 				writer.Write(buffer);
-// 			}
-// 			mutex.ReleaseMutex();
-// 		}
 
 		/// <summary>
 		/// Ensure that the messages are still received when the form is minimized.
@@ -103,7 +83,7 @@ namespace KeyboardConcerto {
 			this.mDecisionQueue.Enqueue(dc = new Decision() {
 				Key = (Keys)e.KeyPressEvent.VKey,
 				State = e.KeyPressEvent.KeyPressState,
-				Allow = this.mUserSettings.ProcessInput(e)
+				Allow = !this.mUserSettings.ProcessInput(e)
 			});
 		}
 
@@ -118,57 +98,40 @@ namespace KeyboardConcerto {
 
 			base.WndProc(ref msg);
 
-			//const uint keyStateMask = 0x80000000;
-			switch (msg.Msg) {  
-				case 32769: {
-						bool block = false;
-						bool decisionFound = false;
-						long lparam = (long)msg.LParam;
-						HookParams hParams = new HookParams() {
-							Key = (Keys)(uint)msg.WParam,
-							State = ((lparam >> 31 & 0x1) == 1) ? breakStr : makeStr,		// WM_DOWN is 0; WM_UP is 1
-							PrevState = ((lparam >> 30 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0 (super confusing)
-							AltState = ((lparam >> 29 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0
-							ExtendedKey = (lparam >> 24 & 0x1) == 1,
-							ScanCode = (byte)(lparam >> 16 & 0xF),
-							RepeatCount = (short)(lparam & 0xFF)
-						};
+			if (msg.Msg == 32769) {
+				long lparam = (long)msg.LParam;
+				HookParams hParams = new HookParams() {
+					Key = (Keys)(uint)msg.WParam,
+					State = ((lparam >> 31 & 0x1) == 1) ? breakStr : makeStr,		// WM_DOWN is 0; WM_UP is 1
+					PrevState = ((lparam >> 30 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0 (super confusing)
+					AltState = ((lparam >> 29 & 0x1) == 1) ? makeStr : breakStr,	// WM_UP is 0; WM_DOWN is 0
+					ExtendedKey = (lparam >> 24 & 0x1) == 1,
+					ScanCode = (byte)(lparam >> 16 & 0xF),
+					RepeatCount = (short)(lparam & 0xFF)
+				};
 
-						Stopwatch timer = new Stopwatch();
-						timer.Start();
-						while (!decisionFound) {
+				Stopwatch timer = new Stopwatch();
+				timer.Start();
+				while (true) {
 
-							// Time out if no matching Raw Input is found after a while.
-							if (timer.ElapsedMilliseconds > MAX_WAIT_TIME) {
-								msg.Result = (IntPtr)0;
-								timer.Stop();
-								return;
-							}
-
-							// Search the queue for matching input.
-							int index = 1;
-							foreach (Decision decision in this.mDecisionQueue) {
-
-								if ((decision.Key == hParams.Key) && (decision.State == hParams.State)) {
-									block = decision.Allow;
-									decisionFound = true;
-									break;
-								}
-								index++;
-							}
-
-							// Remove the current and all preceding messages from the queue.
-							for (int i = 0, count = this.mDecisionQueue.Count; (i < index) && (i < count); i++) {
-								this.mDecisionQueue.Dequeue();
-							}
-						}
-
-						// Reply with the decision.
-						if (block)
-							msg.Result = (IntPtr)1;
+					// Time out if no matching Raw Input is found after a while.
+					if (timer.ElapsedMilliseconds > MAX_WAIT_TIME) {
+						msg.Result = (IntPtr)0;
+						timer.Stop();
+						return;
 					}
-					break;
-			}
+
+					// Search if there's a corresponding raw input decision.
+					// Remove the current and all preceding messages from the queue.
+					for (int i = 0, count = this.mDecisionQueue.Count; i < count; i++) {
+						Decision decision = this.mDecisionQueue.Dequeue();
+						if ((decision.Key == hParams.Key) && (decision.State == hParams.State)) {
+							msg.Result = decision.Allow ? (IntPtr)0 : (IntPtr)1;
+							return;
+						}
+					}
+				}
+			}	
 		}
 		#endregion
 
@@ -180,7 +143,6 @@ namespace KeyboardConcerto {
 			if (this.IsDisposed)
 				return;
 
-			//this.mMemoryMappedFile.Dispose();
 			UninstallHook();
 
 			base.Dispose();

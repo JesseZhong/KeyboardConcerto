@@ -10,8 +10,6 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
-using RawInput_dll;
-using Common;
 #endregion
 
 namespace KeyboardConcerto {
@@ -30,7 +28,7 @@ namespace KeyboardConcerto {
 		#region Members
 		private class PreMessageFilter : IMessageFilter {
 			public bool PreFilterMessage(ref Message m) {
-				if (m.Msg != WM_INPUT) {
+				if (m.Msg != Win32.WM_INPUT) {
 					// Allow any non WM_INPUT message to pass through
 					return false;
 				}
@@ -73,12 +71,6 @@ namespace KeyboardConcerto {
 			Win32.DeviceAudit();
 		}
 
-		struct BroadcastDeviceInterface {
-			public Int32 dbcc_size;
-			public BroadcastDeviceType BroadcastDeviceType;
-			public Guid dbcc_classguid;
-		}
-
 		static IntPtr RegisterForDeviceNotifications(IntPtr parent) {
 			var usbNotifyHandle = IntPtr.Zero;
 			var bdi = new BroadcastDeviceInterface();
@@ -90,7 +82,7 @@ namespace KeyboardConcerto {
 			try {
 				mem = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(BroadcastDeviceInterface)));
 				Marshal.StructureToPtr(bdi, mem, false);
-				usbNotifyHandle = RegisterDeviceNotification(parent, mem, DeviceNotification.DEVICE_NOTIFY_WINDOW_HANDLE);
+				usbNotifyHandle = Win32.RegisterDeviceNotification(parent, mem, DeviceNotification.DEVICE_NOTIFY_WINDOW_HANDLE);
 			} catch (Exception e) {
 				Debug.Print("Registration for device notifications Failed. Error: {0}", Marshal.GetLastWin32Error());
 				Debug.Print(e.StackTrace);
@@ -123,8 +115,7 @@ namespace KeyboardConcerto {
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void OnKeyPressed(object sender, InputEventArg e) {
-			Decision dc;
-			this.mDecisionQueue.Enqueue(dc = new Decision() {
+			this.mDecisionQueue.Enqueue(new Decision() {
 				Key = (Keys)e.KeyPressEvent.VKey,
 				State = e.KeyPressEvent.KeyPressState,
 				Allow = !this.mUserSettings.ProcessInput(e)
@@ -143,13 +134,13 @@ namespace KeyboardConcerto {
 			base.WndProc(ref msg);
 
 			switch (msg.Msg) {
-				case WM_INPUT: {
+				case Win32.WM_INPUT: {
 						// Should never get here if you are using PreMessageFiltering
 						mKeyboardDriver.ProcessRawInput(msg.LParam);
 					}
 					return;
 
-				case WM_USB_DEVICECHANGE: {
+				case Win32.WM_USB_DEVICECHANGE: {
 						Debug.WriteLine("USB Device Arrival / Removal");
 						mKeyboardDriver.EnumerateDevices();
 					}
@@ -204,7 +195,7 @@ namespace KeyboardConcerto {
 			if (this.IsDisposed)
 				return;
 
-			UnregisterDeviceNotification(mDeviceNotifyHandle);
+			Win32.UnregisterDeviceNotification(mDeviceNotifyHandle);
 			UninstallHook();
 
 			base.Dispose();
@@ -240,39 +231,6 @@ namespace KeyboardConcerto {
 		#region Windows API
 		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-		#endregion
-
-		#region Raw Input
-		private const int WM_INPUT = 0x00FF;
-		private const int WM_USB_DEVICECHANGE = 0x0219;
-
-		enum BroadcastDeviceType {
-			DBT_DEVTYP_OEM = 0,
-			DBT_DEVTYP_DEVNODE = 1,
-			DBT_DEVTYP_VOLUME = 2,
-			DBT_DEVTYP_PORT = 3,
-			DBT_DEVTYP_NET = 4,
-			DBT_DEVTYP_DEVICEINTERFACE = 5,
-			DBT_DEVTYP_HANDLE = 6,
-		}
-
-		enum DeviceNotification {
-			/// <summary>The hRecipient parameter is a window handle.</summary>
-			DEVICE_NOTIFY_WINDOW_HANDLE = 0x00000000,
-			/// <summary>The hRecipient parameter is a service status handle.</summary>
-			DEVICE_NOTIFY_SERVICE_HANDLE = 0x00000001,
-			/// <summary>
-			/// Notifies the recipient of device interface events for all device interface classes. (The dbcc_classguid member is ignored.)
-			/// This value can be used only if the dbch_devicetype member is DBT_DEVTYP_DEVICEINTERFACE.
-			///</summary>
-			DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 0x00000004
-		}
-
-		[DllImport("user32.dll", SetLastError = true)]
-		private static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr notificationFilter, DeviceNotification flags);
-
-		[DllImport("user32.dll", SetLastError = true)]
-		private static extern bool UnregisterDeviceNotification(IntPtr handle);
 		#endregion
 
 		#region Hooking

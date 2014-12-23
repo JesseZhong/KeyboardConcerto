@@ -5,8 +5,6 @@ using System;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections.Generic;
-using RawInput_dll;
-using Common;
 #endregion
 
 namespace KeyboardConcerto {

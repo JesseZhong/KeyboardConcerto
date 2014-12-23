@@ -105,6 +105,7 @@ namespace KeyboardConcerto {
 		#region Keyboard Processing
 		/// <summary>
 		/// Tests raw input and stores the result to be applied later.
+		/// <para><b>WARNING: DO NOT USE/ATTACH DEBUGGER!! THE APPLICATION WILL HANG INDEFINITELY.</b></para>
 		/// </summary>
 		/// <param name="keyPressEvent">Raw input event.</param>
 		private void ProcessKeyboard(KeyPressEvent keyPressEvent) {
@@ -117,6 +118,7 @@ namespace KeyboardConcerto {
 
 		/// <summary>
 		/// Pre-filters windows messages for WM_INPUT/raw input.
+		/// <para><b>WARNING: DO NOT USE/ATTACH DEBUGGER!! THE APPLICATION WILL HANG INDEFINITELY.</b></para>
 		/// </summary>
 		private class PreMessageFilter : IMessageFilter {
 
@@ -125,6 +127,7 @@ namespace KeyboardConcerto {
 
 			/// <summary>
 			/// Initializes the filter with the keyboard processing method.
+			/// <para><b>WARNING: DO NOT USE/ATTACH DEBUGGER!! THE APPLICATION WILL HANG INDEFINITELY.</b></para>
 			/// </summary>
 			/// <param name="processKeyboard">Raw input process method.</param>
 			public PreMessageFilter(ProcessKeyboard processKeyboard) {
@@ -133,6 +136,7 @@ namespace KeyboardConcerto {
 
 			/// <summary>
 			/// Pre-filters message for raw input and processes it.
+			/// <para><b>WARNING: DO NOT USE/ATTACH DEBUGGER!! THE APPLICATION WILL HANG INDEFINITELY.</b></para>
 			/// </summary>
 			/// <param name="msg">Message that needs processing.</param>
 			/// <returns>True if the message is a WM_INPUT message.</returns>
@@ -153,6 +157,7 @@ namespace KeyboardConcerto {
 
 		/// <summary>
 		/// Processes and intercepts user input.
+		/// <para><b>WARNING: DO NOT USE/ATTACH DEBUGGER!! THE APPLICATION WILL HANG INDEFINITELY.</b></para>
 		/// </summary>
 		/// <param name="msg">Windows message.</param>
 		[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]

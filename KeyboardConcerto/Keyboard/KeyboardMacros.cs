@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace KeyboardConcerto {
 
 	/// <summary>
-	/// 
+	/// Alias and expansion for storing keys and their macros.
 	/// </summary>
 	public class KeyboardMacros : Dictionary<Keys, KeyMacro> {
 

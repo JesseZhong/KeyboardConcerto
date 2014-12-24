@@ -46,14 +46,13 @@ namespace KeyboardConcerto {
 			this.mDecisionQueue = new Deque<Decision>();
 			AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
 			IntPtr accessHandle = this.Handle; // Ensure that the handle is created.
+			this.mUserSettings = new UserSettings();
 
 			mKeyboardDriver = new RawKeyboard(this.Handle);
 			mKeyboardDriver.EnumerateDevices();
 			mKeyboardDriver.CaptureOnlyIfTopMostWindow = false;
 			mDeviceNotifyHandle = RegisterForDeviceNotifications(this.Handle);
 			Application.AddMessageFilter(this.mFilter = new PreMessageFilter(this.ProcessKeyboard));
-
-			this.mUserSettings = new UserSettings();
 
 			InstallHook(this.Handle);
 
@@ -288,10 +287,10 @@ namespace KeyboardConcerto {
 		/// </summary>
 		private const int WM_HOOK = 0x8001;
 
-		[DllImport("Interceptor.dll")]
+		[DllImport("Interceptor.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern bool InstallHook(IntPtr hWndParent);
 
-		[DllImport("Interceptor.dll")]
+		[DllImport("Interceptor.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern bool UninstallHook();
 		#endregion
 	}

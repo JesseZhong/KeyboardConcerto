@@ -2,7 +2,6 @@
 // Authored by Jesse Z. Zhong
 #region Usings
 using System;
-using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using KeyboardConcerto.RawInput;
@@ -59,7 +58,7 @@ namespace KeyboardConcerto {
 
 				// Check for a key and macro match.
 				KeyMacro macro;
-				if (macroSet.TryGetValue((Keys)keyPressEvent.VKey, out macro)) {
+				if (macroSet.TryGetValue((VirtualKeys)keyPressEvent.VKey, out macro)) {
 
 					// Execute macro and return true.
 					macro.Execute();

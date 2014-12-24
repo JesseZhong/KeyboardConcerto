@@ -2,7 +2,7 @@
 // Authored by Jesse Z. Zhong
 #region Usings
 using System;
-using System.Windows.Forms;
+using System.Windows.Input;
 using WindowsInput;
 #endregion
 

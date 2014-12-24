@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using System.Globalization;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -90,7 +89,8 @@ namespace KeyboardConcerto.RawInput {
 		internal static extern bool UnregisterDeviceNotification(IntPtr handle);
 
 		[DllImport("user32.dll", SetLastError = true)]
-		internal static extern bool PeekMessage(ref Message lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool PeekMessage(out NativeMessage lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
 
 		public static void DeviceAudit() {
 			var file = new FileStream("DeviceAudit.txt", FileMode.Create, FileAccess.Write);

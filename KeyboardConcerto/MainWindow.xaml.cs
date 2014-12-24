@@ -29,6 +29,8 @@ namespace KeyboardConcerto {
 		#endregion
 
 		#region Members
+		private IntPtr mHandle;
+
 		private static RawKeyboard mKeyboardDriver;
 		private IntPtr mDeviceNotifyHandle;
 		private static readonly Guid mDeviceInterfaceHID = new Guid("4D1E55B2-F16F-11CF-88CB-001111000030");
@@ -84,18 +86,24 @@ namespace KeyboardConcerto {
 			return usbNotifyHandle;
 		}
 
+		/// <summary>
+		/// Initialize the hooks for keyboard and wndproc. Grabs the window handle as well.
+		/// </summary>
+		/// <param name="e"></param>
 		protected override void OnSourceInitialized(EventArgs e) {
 			base.OnSourceInitialized(e);
 			HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
 
 			source.AddHook(WndProc);
 
-			mKeyboardDriver = new RawKeyboard(source.Handle);
+			this.mHandle = source.Handle;
+
+			mKeyboardDriver = new RawKeyboard(this.mHandle);
 			mKeyboardDriver.EnumerateDevices();
 			mKeyboardDriver.CaptureOnlyIfTopMostWindow = false;
-			mDeviceNotifyHandle = RegisterForDeviceNotifications(source.Handle);
+			mDeviceNotifyHandle = RegisterForDeviceNotifications(this.mHandle);
 
-			InstallHook(source.Handle);
+			InstallHook(this.mHandle);
 		}
 		#endregion
 
@@ -113,6 +121,27 @@ namespace KeyboardConcerto {
 			});
 		}
 
+		/// <summary>
+		/// Processes all WM_INPUT and WM_HOOK messages sent from windows and the interceptor, respectively.
+		/// <para>Determines whether certain user input will be allowed or blocked depending on UserSettings.</para>
+		/// </summary>
+		/// <param name="hWnd">The window handle.</param>
+		/// <param name="msg">A windows message.</param>
+		/// <param name="wParam">
+		/// Word param for the message. 
+		/// Carries the input code (irrelevant to this implementation) for WM_INPUT.
+		/// Carries the virtual key of the hooked user input/key press.
+		/// </param>
+		/// <param name="lParam">
+		/// Long param for the message.
+		/// Carries the RAWINPUT structure that contains raw input information.
+		/// Carries the flags of the hooked user input/key press, such as key state.
+		/// </param>
+		/// <param name="handled">
+		/// Indicates if the message is handled by this method call. Must be set 
+		/// to true in order for the return value to be considered by the callback.
+		/// </param>
+		/// <returns>0 to allow input and 1 to deny input.</returns>
 		private IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
 			switch (msg) {
 				case Win32.WM_INPUT: {

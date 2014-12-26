@@ -107,6 +107,15 @@
     <Compile Include="RawInput\RegistryAccess.cs" />
     <Compile Include="UserSettings.cs" />
     <Compile Include="RawInput\Win32.cs" />
+    <Compile Include="CustomWindow\DataStructures.cs" />
+    <Compile Include="CustomWindow\Others.cs" />
+    <Compile Include="CustomWindow\WindowButton.xaml.cs">
+      <DependentUpon>WindowButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomWindow\WindowCloseButton.cs" />
+    <Compile Include="CustomWindow\WindowMaximizeButton.cs" />
+    <Compile Include="CustomWindow\WindowMinimizeButton.cs" />
+    <Compile Include="CustomWindow\WindowRestoreButton.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -130,6 +139,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="CustomWindow\Images\buttonX.png" />
     <Content Include="Notes\LParamBreakdown.txt" />
     <Content Include="Notes\Items.txt" />
   </ItemGroup>
@@ -141,6 +151,14 @@
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Resource Include="CustomWindow\ButtonIcons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Page Include="CustomWindow\WindowButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

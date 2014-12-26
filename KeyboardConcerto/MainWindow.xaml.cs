@@ -6,9 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Diagnostics;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.ComponentModel;
 using System.Windows.Interop;
+using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using KeyboardConcerto.CustomWindow;
 using KeyboardConcerto.RawInput;
 #endregion
 
@@ -36,8 +41,14 @@ namespace KeyboardConcerto {
 		private static readonly Guid mDeviceInterfaceHID = new Guid("4D1E55B2-F16F-11CF-88CB-001111000030");
 
 		private UserSettings mUserSettings;
-
 		private Deque<Decision> mDecisionQueue;
+
+		private WindowMinimizeButton mMinimizeButton;
+		private WindowRestoreButton mRestoreButton;
+		private WindowMaximizeButton mMaximizeButton;
+		private WindowCloseButton mCloseButton;
+
+ 		private UIElement mWindowButtons;
 		#endregion
 
 		#region Initialization
@@ -46,13 +57,101 @@ namespace KeyboardConcerto {
 		/// </summary>
 		public MainWindow() {
 			this.InitializeComponent();
-			this.Closing += this.OnWindowClosing;
-
 			this.mDecisionQueue = new Deque<Decision>();
-			AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
 			this.mUserSettings = new UserSettings();
 
+			this.WindowStyle = WindowStyle.None;
+
+			mWindowButtons = this.GenerateWindowButtons();
+
+			this.Loaded += new RoutedEventHandler(this.OnLoaded);
+			this.Closing += new CancelEventHandler(this.OnWindowClosing);
+			this.StateChanged += new EventHandler(this.StandardWindow_StateChanged);
+			this.Activated += new EventHandler(this.OnStandardWindowActivated);
+			this.Deactivated += new EventHandler(this.OnStandardWindowDeactivated);
+
+			AppDomain.CurrentDomain.UnhandledException 
+				+= new UnhandledExceptionEventHandler(this.CurrentDomain_UnhandledException);
+
 			Win32.DeviceAudit();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		private Decorator GetWindowButtonsPlaceholder() {
+			return WindowButtonsPlaceholder;
+		}
+
+		/// <summary>
+		/// Initialize windows border buttons.
+		/// </summary>
+		/// <returns></returns>
+		private UIElement GenerateWindowButtons() {
+			// Buttons
+			this.mMinimizeButton = new WindowMinimizeButton();
+			this.mMinimizeButton.Click += new RoutedEventHandler(this.OnButtonMinimize_Click);
+
+			this.mRestoreButton = new WindowRestoreButton();
+			this.mRestoreButton.Click += new RoutedEventHandler(this.OnButtonRestore_Click);
+			this.mRestoreButton.Margin = new Thickness(-1, 0, 0, 0);
+
+			this.mMaximizeButton = new WindowMaximizeButton();
+			this.mMaximizeButton.Click += new RoutedEventHandler(this.OnButtonMaximize_Click);
+			this.mMaximizeButton.Margin = new Thickness(-1, 0, 0, 0);
+
+			this.mCloseButton = new WindowCloseButton();
+			this.mCloseButton.Click += new RoutedEventHandler(this.OnButtonClose_Click);
+			this.mCloseButton.Margin = new Thickness(-1, 0, 0, 0);
+
+			// put buttons into StackPanel
+			StackPanel buttonsStackPanel = new StackPanel();
+			buttonsStackPanel.Orientation = Orientation.Horizontal;
+			buttonsStackPanel.Children.Add(this.mMinimizeButton);
+			buttonsStackPanel.Children.Add(this.mRestoreButton);
+			buttonsStackPanel.Children.Add(this.mMaximizeButton);
+			buttonsStackPanel.Children.Add(this.mCloseButton);
+
+			return buttonsStackPanel;
+		}
+
+		/// <summary>
+		/// Extends windows glass.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void OnLoaded(object sender, RoutedEventArgs e) {
+			Decorator placeholder = GetWindowButtonsPlaceholder();
+
+			if (placeholder == null)
+				throw new NotSupportedException("Placeholder must be created already in the initialization of the Window");
+
+			placeholder.Child = mWindowButtons;
+			this.OnStateChanged(new EventArgs());
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Header_MouseMove(object sender, MouseEventArgs e) {
+			if (e.LeftButton == MouseButtonState.Pressed)
+				this.DragMove();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e) {
+			if (this.Width + e.HorizontalChange > 10)
+				this.Width += e.HorizontalChange;
+			if (this.Height + e.VerticalChange > 10)
+				this.Height += e.VerticalChange;
+
 		}
 
 		/// <summary>
@@ -224,6 +323,95 @@ namespace KeyboardConcerto {
 			KeyboardConcerto.App app = new KeyboardConcerto.App();
 			app.InitializeComponent();
 			app.Run();
+		}
+		#endregion
+
+		#region Button Event Handling
+		/// <summary>
+		/// Procures when Minimize button clicked.
+		/// </summary>
+		/// <param name="sender">Minimize button.</param>
+		/// <param name="e">Event arguments.</param>
+		private void OnButtonMinimize_Click(object sender, RoutedEventArgs e) {
+			this.WindowState = WindowState.Minimized;
+		}
+
+		/// <summary>
+		/// Procures when Restore button clicked.
+		/// </summary>
+		/// <param name="sender">Restore button.</param>
+		/// <param name="e">Event arguments.</param>
+		private void OnButtonRestore_Click(object sender, RoutedEventArgs e) {
+			this.WindowState = WindowState.Normal;
+		}
+
+		/// <summary>
+		/// Procures when Maximize button clicked.
+		/// </summary>
+		/// <param name="sender">Maximize button.</param>
+		/// <param name="e">Event arguments.</param>
+		private void OnButtonMaximize_Click(object sender, RoutedEventArgs e) {
+			this.WindowState = WindowState.Maximized;
+		}
+
+		/// <summary>
+		/// Procures when Close button clicked.
+		/// </summary>
+		/// <param name="sender">Close button.</param>
+		/// <param name="e">Event arguments.</param>
+		private void OnButtonClose_Click(object sender, RoutedEventArgs e) {
+			this.Close();
+		}
+
+
+		// called when state of the window changed to minimized, normal or maximized
+		private void StandardWindow_StateChanged(object sender, EventArgs e) {
+			if (this.WindowState == WindowState.Normal) {
+				this.mRestoreButton.Visibility = Visibility.Collapsed;
+			} else if (this.WindowState == WindowState.Maximized) {
+				this.mMaximizeButton.Visibility = Visibility.Collapsed;
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="state"></param>
+		/// <param name="button"></param>
+		private void OnWindowButtonStateChange(WindowButtonState state, WindowButton button) {
+			switch (state) {
+				case WindowButtonState.Normal:
+					button.Visibility = Visibility.Visible;
+					button.IsEnabled = true;
+					break;
+
+				case WindowButtonState.Disabled:
+					button.Visibility = Visibility.Visible;
+					button.IsEnabled = false;
+					break;
+
+				case WindowButtonState.None:
+					button.Visibility = Visibility.Collapsed;
+					break;
+			}
+		}
+
+		//
+		// Active / Not active Window
+		// manages window buttons that differ in those states
+		//
+		private void OnStandardWindowActivated(object sender, EventArgs e) {
+			mMinimizeButton.Background = mMinimizeButton.BackgroundDefaultValue;
+			mMaximizeButton.Background = mMaximizeButton.BackgroundDefaultValue;
+			mRestoreButton.Background = mRestoreButton.BackgroundDefaultValue;
+			mCloseButton.Background = mCloseButton.BackgroundDefaultValue;
+		}
+
+		private void OnStandardWindowDeactivated(object sender, EventArgs e) {
+			mMinimizeButton.Background = Brushes.Transparent;
+			mMaximizeButton.Background = Brushes.Transparent;
+			mRestoreButton.Background = Brushes.Transparent;
+			mCloseButton.Background = Brushes.Transparent;
 		}
 		#endregion
 

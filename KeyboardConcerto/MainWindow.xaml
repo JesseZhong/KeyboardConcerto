@@ -1,7 +1,36 @@
 ﻿<Window x:Class="KeyboardConcerto.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        WindowStyle="SingleBorderWindow"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid/>
+                              AllowsTransparency="True" 
+                              Title="MainWindow"  
+                              Width="280"
+                              Height="400">
+    <Window.Background>
+        <SolidColorBrush Opacity="0" Color="Transparent"/>
+    </Window.Background>
+    <Border BorderBrush="#55000000" 
+                BorderThickness="1" 
+                CornerRadius="1">
+        <DockPanel Background="Transparent">
+            <Border Margin="0,0"
+                    MouseMove="Header_MouseMove"
+                    DockPanel.Dock="Top">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" 
+                                             EndPoint="0,1">
+                        <GradientStop Color="#FF000000" 
+                                          Offset="0" />
+                        <GradientStop Color="#FF0066FF" 
+                                          Offset="0.4" />
+                        <GradientStop Color="#003BB2EA" 
+                                          Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border Name="WindowButtonsPlaceholder" 
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Top" 
+                            Margin="0,-1,0,0" />
+            </Border>
+        </DockPanel>
+    </Border>
 </Window>

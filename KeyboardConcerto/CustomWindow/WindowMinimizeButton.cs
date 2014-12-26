@@ -19,7 +19,7 @@ namespace KeyboardConcerto.CustomWindow {
 			this.Content = resourceDictionary["WindowButtonMinimizeIcon"];
 			this.ContentDisabled = resourceDictionary["WindowButtonMinimizeIconDisabled"];
 
-			this.CornerRadius = new CornerRadius(0, 0, 0, 3);
+			this.CornerRadius = new CornerRadius(0, 0, 0, 1);
 		}
 	}
 }

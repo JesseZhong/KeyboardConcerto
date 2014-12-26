@@ -60,7 +60,9 @@ namespace KeyboardConcerto {
 			this.mDecisionQueue = new Deque<Decision>();
 			this.mUserSettings = new UserSettings();
 
-			this.WindowStyle = WindowStyle.None;
+			this.WindowStyle = WindowStyle.None; 
+			this.ResizeMode = ResizeMode.NoResize;
+			this.Background = Brushes.Transparent;
 
 			mWindowButtons = this.GenerateWindowButtons();
 
@@ -117,6 +119,26 @@ namespace KeyboardConcerto {
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="hwnd"></param>
+		private void InitializeGlass(IntPtr hWnd) {
+			if (!Win32Interop.DwmIsCompositionEnabled())
+				return;
+
+			// fill the background with glass
+			var margins = new MARGINS();
+			margins.cxLeftWidth = margins.cxRightWidth = margins.cyBottomHeight = margins.cyTopHeight = -1;
+			Win32Interop.DwmExtendFrameIntoClientArea(hWnd, ref margins);
+
+			// initialize blur for the window
+			DWM_BLURBEHIND bbh = new DWM_BLURBEHIND();
+			bbh.fEnable = true;
+			bbh.dwFlags = Win32Interop.DWM_BB_ENABLE;
+			Win32Interop.DwmEnableBlurBehindWindow(hWnd, ref bbh);
+		}
+
+		/// <summary>
 		/// Extends windows glass.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -132,26 +154,28 @@ namespace KeyboardConcerto {
 		}
 
 		/// <summary>
-		/// 
+		/// Initialize the hooks for keyboard and wndproc. Grabs the window handle as well.
 		/// </summary>
-		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void Header_MouseMove(object sender, MouseEventArgs e) {
-			if (e.LeftButton == MouseButtonState.Pressed)
-				this.DragMove();
-		}
+		protected override void OnSourceInitialized(EventArgs e) {
+			base.OnSourceInitialized(e);
+			HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e) {
-			if (this.Width + e.HorizontalChange > 10)
-				this.Width += e.HorizontalChange;
-			if (this.Height + e.VerticalChange > 10)
-				this.Height += e.VerticalChange;
+			source.AddHook(WndProc);
 
+			this.mHandle = source.Handle;
+
+			if (Environment.OSVersion.Version.Major >= 6) {
+				source.CompositionTarget.BackgroundColor = Colors.Transparent;
+				this.InitializeGlass(this.mHandle);
+			}
+
+			mKeyboardDriver = new RawKeyboard(this.mHandle);
+			mKeyboardDriver.EnumerateDevices();
+			mKeyboardDriver.CaptureOnlyIfTopMostWindow = false;
+			mDeviceNotifyHandle = RegisterForDeviceNotifications(this.mHandle);
+
+			InstallHook(this.mHandle);
 		}
 
 		/// <summary>
@@ -183,26 +207,6 @@ namespace KeyboardConcerto {
 			}
 
 			return usbNotifyHandle;
-		}
-
-		/// <summary>
-		/// Initialize the hooks for keyboard and wndproc. Grabs the window handle as well.
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnSourceInitialized(EventArgs e) {
-			base.OnSourceInitialized(e);
-			HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
-
-			source.AddHook(WndProc);
-
-			this.mHandle = source.Handle;
-
-			mKeyboardDriver = new RawKeyboard(this.mHandle);
-			mKeyboardDriver.EnumerateDevices();
-			mKeyboardDriver.CaptureOnlyIfTopMostWindow = false;
-			mDeviceNotifyHandle = RegisterForDeviceNotifications(this.mHandle);
-
-			InstallHook(this.mHandle);
 		}
 		#endregion
 
@@ -243,6 +247,7 @@ namespace KeyboardConcerto {
 		/// <returns>0 to allow input and 1 to deny input.</returns>
 		private IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
 			switch (msg) {
+				#region Win32.WM_INPUT
 				case Win32.WM_INPUT: {
 						// Should never get here if you are using PreMessageFiltering
 						KeyPressEvent keyPressEvent;
@@ -251,13 +256,15 @@ namespace KeyboardConcerto {
 						}
 						return (IntPtr)0;
 					}
-
+				#endregion
+				#region Win32.WM_USB_DEVICECHANGE
 				case Win32.WM_USB_DEVICECHANGE: {
 						Debug.WriteLine("USB Device Arrival / Removal");
 						mKeyboardDriver.EnumerateDevices();
 						return (IntPtr)0;
 					}
-
+				#endregion
+				#region WM_HOOK
 				case WM_HOOK: {
 					handled = true;
 						const string makeStr = "MAKE";
@@ -306,7 +313,13 @@ namespace KeyboardConcerto {
 							}
 						}
 					}
-
+				#endregion
+				#region Win32Interop.WM_DWMCOMPOSITIONCHANGED
+				case Win32Interop.WM_DWMCOMPOSITIONCHANGED:
+					this.InitializeGlass(hWnd);
+					handled = false;
+					return (IntPtr)0;
+				#endregion
 				default:
 					return (IntPtr)0;
 			}
@@ -323,6 +336,18 @@ namespace KeyboardConcerto {
 			KeyboardConcerto.App app = new KeyboardConcerto.App();
 			app.InitializeComponent();
 			app.Run();
+		}
+		#endregion
+
+		#region Mouse Move Event Handling
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Header_MouseMove(object sender, MouseEventArgs e) {
+			if (e.LeftButton == MouseButtonState.Pressed)
+				this.DragMove();
 		}
 		#endregion
 

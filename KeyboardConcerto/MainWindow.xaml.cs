@@ -130,12 +130,6 @@ namespace KeyboardConcerto {
 			var margins = new MARGINS();
 			margins.cxLeftWidth = margins.cxRightWidth = margins.cyBottomHeight = margins.cyTopHeight = -1;
 			Win32Interop.DwmExtendFrameIntoClientArea(hWnd, ref margins);
-
-			// initialize blur for the window
-			DWM_BLURBEHIND bbh = new DWM_BLURBEHIND();
-			bbh.fEnable = true;
-			bbh.dwFlags = Win32Interop.DWM_BB_ENABLE;
-			Win32Interop.DwmEnableBlurBehindWindow(hWnd, ref bbh);
 		}
 
 		/// <summary>

@@ -43,18 +43,11 @@
     <Image Source="pack://application:,,,/KeyboardConcerto;Component/CustomWindow/Images/buttonX.png" Width="13" Height="10" x:Key="WindowButtonCloseIcon" />
 
     <!-- Background colors for red button (e.g close button) -->
-    <LinearGradientBrush x:Key="RedButtonBackground" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#00F89C8C" />
-        <GradientStop Offset="0.45" Color="#00D47F75" />
-        <GradientStop Offset="0.45" Color="#00C04C3C" />
-        <GradientStop Offset="1" Color="#00C98172" />
-    </LinearGradientBrush>
-
     <LinearGradientBrush x:Key="RedButtonMouseOverBackground" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#00F89C8C" />
-        <GradientStop Offset="0.45" Color="#3AC9C9C9" />
-        <GradientStop Offset="0.45" Color="#7FC9C9C9" />
-        <GradientStop Offset="0.75" Color="#48C9C9C9" />
-        <GradientStop Offset="1" Color="#7F3FFFF0" />
+        <GradientStop Offset="0" Color="#F89C8C" />
+        <GradientStop Offset="0.45" Color="#E36A53" />
+        <GradientStop Offset="0.45" Color="#C72B0E" />
+        <GradientStop Offset="0.75" Color="#D44310" />
+        <GradientStop Offset="1" Color="#F5E478" />
     </LinearGradientBrush>
 </ResourceDictionary>

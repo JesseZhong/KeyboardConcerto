@@ -1,5 +1,6 @@
 ﻿#region Usings
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 #endregion
 
@@ -18,5 +19,16 @@ namespace KeyboardConcerto.CustomWindow {
 		public int cxRightWidth;
 		public int cyTopHeight;
 		public int cyBottomHeight;
-	} 
+	}
+ 
+	[StructLayout(LayoutKind.Sequential)]
+	public struct COLORIZATIONPARAMS {
+		public Color BaseColor;
+		public Color AfterGlowColor;
+		public uint Intensity;
+		public uint AfterGlowBalance;
+		public uint BlurBalance;
+		public uint GlassReflectionIntensity;
+		public bool IsOpaque;
+	}
 }

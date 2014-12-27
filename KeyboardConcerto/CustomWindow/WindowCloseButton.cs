@@ -22,11 +22,6 @@ namespace KeyboardConcerto.CustomWindow {
 			ResourceDictionary resourceDictionary = (ResourceDictionary)XamlReader.Load(resourceStream);
 
 			//
-			// Background
-			this.Background = (Brush)resourceDictionary["RedButtonBackground"];
-			_backgroundDefaultValue = (Brush)resourceDictionary["RedButtonBackground"];
-
-			//
 			// Foreground (represents a backgroundcolor when Mouse is over)
 			this.Foreground = (Brush)resourceDictionary["RedButtonMouseOverBackground"];
 

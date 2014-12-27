@@ -8,11 +8,6 @@ using System.Windows.Media;
 
 namespace KeyboardConcerto.CustomWindow {
 	public class WindowCloseButton : WindowButton {
-		Brush _backgroundDefaultValue;
-
-		public override Brush BackgroundDefaultValue {
-			get { return _backgroundDefaultValue; }
-		}
 
 		public WindowCloseButton() {
 			this.Width = 43;

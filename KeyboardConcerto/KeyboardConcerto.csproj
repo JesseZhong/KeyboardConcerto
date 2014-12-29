@@ -87,8 +87,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomWindow\OpticWindow.xaml.cs">
+      <DependentUpon>OpticWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomWindow\Win32Interop.cs" />
     <Compile Include="Deque.cs" />
+    <Compile Include="MacrosWindow.xaml.cs">
+      <DependentUpon>MacrosWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -147,6 +153,14 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CustomWindow\OpticWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MacrosWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -347,6 +347,26 @@ namespace KeyboardConcerto {
 
 		#region Button Event Handling
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void OnMacrosButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+			// TODO: Add event handler implementation here.
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void OnSettingsButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+			// TODO: Add event handler implementation here.
+		}
+		#endregion
+
+		#region Window Button Event Handling
+		/// <summary>
 		/// Procures when Minimize button clicked.
 		/// </summary>
 		/// <param name="sender">Minimize button.</param>

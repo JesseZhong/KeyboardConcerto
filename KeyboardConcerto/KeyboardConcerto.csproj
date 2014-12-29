@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ExpressionBlendVersion>12.0.51020.0</ExpressionBlendVersion>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -87,9 +89,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomWindow\OpticWindow.xaml.cs">
-      <DependentUpon>OpticWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="CustomWindow\Win32Interop.cs" />
     <Compile Include="Deque.cs" />
     <Compile Include="MacrosWindow.xaml.cs">
@@ -124,6 +123,9 @@
     <Compile Include="CustomWindow\WindowMaximizeButton.cs" />
     <Compile Include="CustomWindow\WindowMinimizeButton.cs" />
     <Compile Include="CustomWindow\WindowRestoreButton.cs" />
+    <Compile Include="WindowTemplate.xaml.cs">
+      <DependentUpon>WindowTemplate.xaml</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -152,14 +154,10 @@
     <Content Include="Notes\Items.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="App.xaml">
+    <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="CustomWindow\OpticWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    </ApplicationDefinition>
     <Page Include="MacrosWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -167,6 +165,10 @@
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WindowTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Resource Include="CustomWindow\ButtonIcons.xaml">
       <SubType>Designer</SubType>

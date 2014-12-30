@@ -5,5 +5,19 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
 		x:Class="KeyboardConcerto.MainWindow" Title="MainWindow" 
 		Width="169.2" Height="400" Style="{DynamicResource OpticWindow}">
-	
+    <Window.Resources>
+        <Grid x:Key="WindowContentArea" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Row="0" Grid.Column="0" Content="Macros" Click="OnMacrosButton_Click" />
+            <Button Grid.Row="0" Grid.Column="1" Content="Settings" Click="OnSettingsButton_Click" />
+        </Grid>
+    </Window.Resources>
 </Window>

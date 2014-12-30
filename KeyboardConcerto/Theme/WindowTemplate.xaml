@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary x:Class="KeyboardConcerto.Theme.WindowTemplate"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	<!-- Resource dictionary entries should be defined here. -->
 
 	<!-- Window Properties -->
@@ -22,41 +23,29 @@
     <SolidColorBrush x:Key="BottomBarBorderBrush" Color="Black" />
 
     <!-- Button Properties -->
-    <Setter x:Key="ButtonBackground" Property="Button.Background">
-        <Setter.Value>
-            <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                <GradientStop Color="#265BA5AF" Offset="0"/>
-                <GradientStop Color="#26FFFFFF" Offset="1"/>
-            </LinearGradientBrush>
-        </Setter.Value>
-    </Setter>
-    <Setter x:Key="ButtonBorderBrush" Property="Button.BorderBrush">
-        <Setter.Value>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="#FF1A1A1A" Offset="0"/>
-                <GradientStop Color="#FF020202" Offset="0.349"/>
-                <GradientStop Color="Black" Offset="1"/>
-            </LinearGradientBrush>
-        </Setter.Value>
-    </Setter>
-    <Setter x:Key="ButtonForeground" Property="Button.Foreground" Value="White" />
-    <Setter x:Key="ButtonFontSize" Property="Button.FontSize" Value="14" />
-    <Setter x:Key="ButtonSnapsToDevicePixels" Property="Button.SnapsToDevicePixels" Value="True" />
-    <Setter x:Key="ButtonWidth" Property="Button.Width" Value="68" />
-    <Setter x:Key="ButtonHeight" Property="Button.Height" Value="48" />
+    <LinearGradientBrush x:Key="ButtonBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#265BA5AF" Offset="0"/>
+        <GradientStop Color="#26FFFFFF" Offset="1"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="ButtonBorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FF1A1A1A" Offset="0"/>
+        <GradientStop Color="#FF020202" Offset="0.349"/>
+        <GradientStop Color="Black" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ButtonForeground" Color="White" />
+    <sys:Double x:Key="ButtonFontSize">14</sys:Double>
+    <sys:Boolean x:Key="ButtonSnapsToDevicePixels">True</sys:Boolean>
+    <sys:Double x:Key="ButtonWidth">68</sys:Double>
+    <sys:Double x:Key="ButtonHeight">48</sys:Double>
 
     <!-- Button Mouse Over Properities -->
-    <Setter x:Key="ButtonMouseOverBackground" Property="Button.Background">
-        <Setter.Value>
-            <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                <GradientStop Color="#4C5BA5AF" Offset="0"/>
-                <GradientStop Color="#4CFFFFFF" Offset="1"/>
-            </LinearGradientBrush>
-        </Setter.Value>
-    </Setter>
-    <Setter x:Key="ButtonMouseOverForeground" Property="Button.Foreground" Value="White" />
-    <Setter x:Key="ButtonMousePressedBackground" Property="Button.Background" Value="DarkSlateGray" />
-    <Setter x:Key="ButtonMousePressedForeground" Property="Button.Foreground" Value="White" />
+    <LinearGradientBrush x:Key="ButtonMouseOverBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#4C5BA5AF" Offset="0"/>
+        <GradientStop Color="#4CFFFFFF" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ButtonMouseOverForeground" Color="White" />
+    <SolidColorBrush x:Key="ButtonMousePressedBackground" Color="DarkSlateGray" />
+    <SolidColorBrush x:Key="ButtonMousePressedForeground" Color="White" />
 
 
     <!-- Window Style -->
@@ -77,8 +66,17 @@
                             BorderThickness="0,1" CornerRadius="1">
                         <DockPanel x:Name="DockPanel" Background="{DynamicResource WindowBackground}">
                             <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                
                                 <!-- Top Bar -->
-                                <Border x:Name="TopBar" Margin="0,0" Background="{DynamicResource TopBarBackground}" RenderTransformOrigin="0.5,0.5" 
+                                <Border Grid.Row="0" x:Name="TopBar" Margin="0,0" Background="{DynamicResource TopBarBackground}" RenderTransformOrigin="0.5,0.5" 
 										Height="39" VerticalAlignment="Top" HorizontalAlignment="Stretch" MouseMove="TopBar_MouseMove" 
 										BorderBrush="{DynamicResource TopBarBorderBrush}" BorderThickness="1,0" >
                                     <Border x:Name="WindowButtonsPlaceholder" 
@@ -93,10 +91,10 @@
                                 </Border>
                                 
                                 <!-- Content Area -->
-                                <ContentPresenter Content="{DynamicResource WindowContentArea}"/>
+                                <ContentPresenter Grid.Row="1" Content="{DynamicResource WindowContentArea}"/>
 
                                 <!-- Bottom Bar -->
-                                <Border x:Name="BottomBar" Background="{DynamicResource BottomBarBackground}" BorderBrush="{DynamicResource BottomBarBorderBrush}" 
+                                <Border Grid.Row="2" x:Name="BottomBar" Background="{DynamicResource BottomBarBackground}" BorderBrush="{DynamicResource BottomBarBorderBrush}" 
 										BorderThickness="1,0" VerticalAlignment="Bottom" Height="20.8" />
                             </Grid>
                         </DockPanel>
@@ -119,12 +117,14 @@
         <!-- Button Template and Layout -->
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
+                <ControlTemplate TargetType="{x:Type Button}" x:Name="ButtonTemplate">
 
                     <!-- Basic Appearance -->
-                    <Border CornerRadius="1" BorderThickness="1" BorderBrush="{DynamicResource ButtonBorderBrush}" Background="{DynamicResource ButtonBackground}">
+                    <Border x:Name="HighlightBorder" CornerRadius="1" BorderThickness="1" 
+                            BorderBrush="{DynamicResource ButtonBorderBrush}" 
+                            Background="{DynamicResource ButtonBackground}">
                         <Grid>
-                            <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                            <TextBlock x:Name="ButtonText" Text="{Binding Content, RelativeSource={RelativeSource AncestorType=Button}}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
                         </Grid>
                     </Border>
 
@@ -133,14 +133,14 @@
 
                         <!-- Mouse Over -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ButtonMouseOverBackground}" />
-                            <Setter Property="Foreground" Value="{DynamicResource ButtonMouseOverForeground}" />
+                            <Setter TargetName="HighlightBorder" Property="Background" Value="{DynamicResource ButtonMouseOverBackground}" />
+                            <Setter TargetName="ButtonText" Property="Foreground" Value="{DynamicResource ButtonMouseOverForeground}" />
                         </Trigger>
 
                         <!-- Mouse Pressed -->
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ButtonMousePressedBackground}" />
-                            <Setter Property="Foreground" Value="{DynamicResource ButtonMousePressedForeground}" />
+                            <Setter TargetName="HighlightBorder" Property="Background" Value="{DynamicResource ButtonMousePressedBackground}" />
+                            <Setter TargetName="ButtonText" Property="Foreground" Value="{DynamicResource ButtonMousePressedForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

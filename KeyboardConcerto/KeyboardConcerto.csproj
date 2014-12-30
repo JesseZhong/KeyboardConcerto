@@ -116,13 +116,6 @@
     <Compile Include="RawInput\Win32.cs" />
     <Compile Include="CustomWindow\DataStructures.cs" />
     <Compile Include="CustomWindow\Others.cs" />
-    <Compile Include="CustomWindow\WindowButton.xaml.cs">
-      <DependentUpon>WindowButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CustomWindow\WindowCloseButton.cs" />
-    <Compile Include="CustomWindow\WindowMaximizeButton.cs" />
-    <Compile Include="CustomWindow\WindowMinimizeButton.cs" />
-    <Compile Include="CustomWindow\WindowRestoreButton.cs" />
     <Compile Include="WindowTemplate.xaml.cs">
       <DependentUpon>WindowTemplate.xaml</DependentUpon>
     </Compile>
@@ -174,10 +167,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
-    <Page Include="CustomWindow\WindowButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

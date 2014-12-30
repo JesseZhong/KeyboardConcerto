@@ -17,10 +17,10 @@ namespace KeyboardConcerto {
 			Window window = (Window)((FrameworkElement)sender).TemplatedParent;
 			
 			if (window.WindowState == WindowState.Normal) {
-				WindowRestoreButton restoreButton = (WindowRestoreButton)this["RestoreButton"];
+				Button restoreButton = (Button)this["RestoreButton"];
 				restoreButton.Visibility = Visibility.Collapsed;
 			} else if (window.WindowState == WindowState.Maximized) {
-				WindowMaximizeButton maximizeButton = (WindowMaximizeButton)this["MaximizeButton"];
+				Button maximizeButton = (Button)this["MaximizeButton"];
 				maximizeButton.Visibility = Visibility.Collapsed;
 			}
 		}
@@ -38,7 +38,7 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <param name="sender">Minimize button.</param>
 		/// <param name="e">Event arguments.</param>
-		private void OnButtonMinimize_Click(object sender, RoutedEventArgs e) {
+		private void OnMinimizeButton_Click(object sender, RoutedEventArgs e) {
 			Window window = (Window)((FrameworkElement)sender).TemplatedParent;
 			window.WindowState = WindowState.Minimized;
 		}
@@ -48,7 +48,7 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <param name="sender">Restore button.</param>
 		/// <param name="e">Event arguments.</param>
-		private void OnButtonRestore_Click(object sender, RoutedEventArgs e) {
+		private void OnRestoreButton_Click(object sender, RoutedEventArgs e) {
 			Window window = (Window)((FrameworkElement)sender).TemplatedParent;
 			window.WindowState = WindowState.Normal;
 		}
@@ -58,7 +58,7 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <param name="sender">Maximize button.</param>
 		/// <param name="e">Event arguments.</param>
-		private void OnButtonMaximize_Click(object sender, RoutedEventArgs e) {
+		private void OnMaximizeButton_Click(object sender, RoutedEventArgs e) {
 			Window window = (Window)((FrameworkElement)sender).TemplatedParent;
 			window.WindowState = WindowState.Maximized;
 		}
@@ -68,7 +68,7 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <param name="sender">Close button.</param>
 		/// <param name="e">Event arguments.</param>
-		private void OnButtonClose_Click(object sender, RoutedEventArgs e) {
+		private void OnCloseButton_Click(object sender, RoutedEventArgs e) {
 			Window window = (Window)((FrameworkElement)sender).TemplatedParent;
 			window.Close();
 		}
@@ -78,7 +78,7 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <param name="state"></param>
 		/// <param name="button"></param>
-		private void OnWindowButtonStateChange(WindowButtonState state, WindowButton button) {
+		private void OnWindowButtonStateChange(WindowButtonState state, Button button) {
 			switch (state) {
 				case WindowButtonState.Normal:
 					button.Visibility = Visibility.Visible;

@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 #endregion
 
-namespace KeyboardConcerto.CustomWindow {
+namespace KeyboardConcerto.Theme {
 	[StructLayout( LayoutKind.Sequential )]
 	public struct DWM_BLURBEHIND {
 		public int dwFlags;

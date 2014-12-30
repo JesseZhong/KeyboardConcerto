@@ -89,7 +89,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CustomWindow\Win32Interop.cs" />
+    <Compile Include="Theme\Win32Interop.cs" />
     <Compile Include="Deque.cs" />
     <Compile Include="MacrosWindow.xaml.cs">
       <DependentUpon>MacrosWindow.xaml</DependentUpon>
@@ -114,9 +114,8 @@
     <Compile Include="RawInput\RegistryAccess.cs" />
     <Compile Include="UserSettings.cs" />
     <Compile Include="RawInput\Win32.cs" />
-    <Compile Include="CustomWindow\DataStructures.cs" />
-    <Compile Include="CustomWindow\Others.cs" />
-    <Compile Include="WindowTemplate.xaml.cs">
+    <Compile Include="Theme\DataStructures.cs" />
+    <Compile Include="Theme\WindowTemplate.xaml.cs">
       <DependentUpon>WindowTemplate.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -142,7 +141,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="CustomWindow\Images\buttonX.png" />
+    <Resource Include="Theme\Images\buttonX.png" />
     <Content Include="Notes\LParamBreakdown.txt" />
     <Content Include="Notes\Items.txt" />
   </ItemGroup>
@@ -159,14 +158,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowTemplate.xaml">
+    <Page Include="Theme\WindowTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Resource Include="CustomWindow\ButtonIcons.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

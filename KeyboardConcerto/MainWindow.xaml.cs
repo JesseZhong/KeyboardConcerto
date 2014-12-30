@@ -13,7 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using KeyboardConcerto.CustomWindow;
+using KeyboardConcerto.Theme;
 using KeyboardConcerto.RawInput;
 #endregion
 

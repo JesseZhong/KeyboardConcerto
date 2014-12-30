@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 #endregion
 
-namespace KeyboardConcerto.CustomWindow {
+namespace KeyboardConcerto.Theme {
 	public class Win32Interop {
 
 		public const int WM_DWMCOMPOSITIONCHANGED = 0x031E;

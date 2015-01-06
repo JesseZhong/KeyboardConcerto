@@ -5,46 +5,28 @@
 	<!-- Resource dictionary entries should be defined here. -->
 
 	<!-- Window Properties -->
-    <LinearGradientBrush x:Key="WindowBackground" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#265BA5AF" Offset="0"/>
-        <GradientStop Color="#26FFFFFF" Offset="1"/>
-    </LinearGradientBrush>
-    <SolidColorBrush x:Key="WindowBorderBrush" Color="#55000000" />
-    <LinearGradientBrush x:Key="TopBarBackground" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="Black" Offset="0"/>
-        <GradientStop Color="#FF1A1A1A" Offset="1"/>
-        <GradientStop Color="#FF020202" Offset="0.349"/>
-    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="WindowBackground" EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+        <GradientStop Color="#FF9B59B6" Offset="0.988"/>
+        <GradientStop Color="#FF3498DB" Offset="0.288"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="WindowBorderBrush" Color="#55000000" />
+    <SolidColorBrush x:Key="TopBarBackground" Color="#FF000000" />
     <SolidColorBrush x:Key="TopBarBorderBrush" Color="Black" />
-    <LinearGradientBrush x:Key="BottomBarBackground" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FF020202" Offset="1"/>
-        <GradientStop Color="#FF1A1A1A"/>
-    </LinearGradientBrush>
-    <SolidColorBrush x:Key="BottomBarBorderBrush" Color="Black" />
+    <SolidColorBrush x:Key="TopBarForeground" Color="#FF3498DB" />
+    <FontFamily x:Key="WindowFontFamily">OpenSans</FontFamily>
+    <sys:Double x:Key="WindowFontSize">11</sys:Double>
 
     <!-- Button Properties -->
-    <LinearGradientBrush x:Key="ButtonBackground" EndPoint="0,1" StartPoint="0,0">
-        <GradientStop Color="#265BA5AF" Offset="0"/>
-        <GradientStop Color="#26FFFFFF" Offset="1"/>
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonBorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FF1A1A1A" Offset="0"/>
-        <GradientStop Color="#FF020202" Offset="0.349"/>
-        <GradientStop Color="Black" Offset="1"/>
-    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ButtonBackground" Color="#12FFFFFF" />
+    <SolidColorBrush x:Key="ButtonBorderBrush" Color="Transparent" />
     <SolidColorBrush x:Key="ButtonForeground" Color="White" />
-    <sys:Double x:Key="ButtonFontSize">14</sys:Double>
+    <sys:Double x:Key="ButtonFontSize">12</sys:Double>
     <sys:Boolean x:Key="ButtonSnapsToDevicePixels">True</sys:Boolean>
-    <sys:Double x:Key="ButtonWidth">68</sys:Double>
-    <sys:Double x:Key="ButtonHeight">48</sys:Double>
 
     <!-- Button Mouse Over Properities -->
-    <LinearGradientBrush x:Key="ButtonMouseOverBackground" EndPoint="0,1" StartPoint="0,0">
-        <GradientStop Color="#4C5BA5AF" Offset="0"/>
-        <GradientStop Color="#4CFFFFFF" Offset="1"/>
-    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ButtonMouseOverBackground" Color="#28FFFFFF" />
     <SolidColorBrush x:Key="ButtonMouseOverForeground" Color="White" />
-    <SolidColorBrush x:Key="ButtonMousePressedBackground" Color="DarkSlateGray" />
+    <SolidColorBrush x:Key="ButtonMousePressedBackground" Color="#6CFFFFFF" />
     <SolidColorBrush x:Key="ButtonMousePressedForeground" Color="White" />
 
 
@@ -63,7 +45,7 @@
                 <ControlTemplate TargetType="{x:Type Window}">
                     
                     <Border x:Name="MainBorder" BorderBrush="{DynamicResource WindowBorderBrush}"
-                            BorderThickness="0,1" CornerRadius="1">
+                            BorderThickness="0,0" CornerRadius="1">
                         <DockPanel x:Name="DockPanel" Background="{DynamicResource WindowBackground}">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -77,25 +59,28 @@
                                 
                                 <!-- Top Bar -->
                                 <Border Grid.Row="0" x:Name="TopBar" Margin="0,0" Background="{DynamicResource TopBarBackground}" RenderTransformOrigin="0.5,0.5" 
-										Height="39" VerticalAlignment="Top" HorizontalAlignment="Stretch" MouseMove="TopBar_MouseMove" 
-										BorderBrush="{DynamicResource TopBarBorderBrush}" BorderThickness="1,0" >
-                                    <Border x:Name="WindowButtonsPlaceholder" 
-										HorizontalAlignment="Right" 
-										VerticalAlignment="Top" 
-										Margin="0,-1,0,0">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Button x:Name="MinimizeButton" Style="{DynamicResource MinimizeButton}" Margin="-1,0,0,0" Click="OnMinimizeButton_Click" />
-                                            <Button x:Name="CloseButton" Style="{DynamicResource CloseButton}" Margin="-1,0,0,0" Click="OnCloseButton_Click" />
-                                        </StackPanel>
+										Height="20" VerticalAlignment="Top" HorizontalAlignment="Stretch" MouseMove="TopBar_MouseMove">
+                                    <Border HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{TemplateBinding Title}" Foreground="{DynamicResource TopBarForeground}" Margin="6,0,0,0" VerticalAlignment="Center"
+                                                       FontSize="{DynamicResource WindowFontSize}" FontFamily="{DynamicResource WindowFontFamily}"/>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <Button x:Name="MinimizeButton" Style="{DynamicResource MinimizeButton}" Click="OnMinimizeButton_Click" />
+                                                <Button x:Name="CloseButton" Style="{DynamicResource CloseButton}" Click="OnCloseButton_Click" />
+                                            </StackPanel>
+                                        </Grid>
                                     </Border>
                                 </Border>
                                 
                                 <!-- Content Area -->
                                 <ContentPresenter Grid.Row="1" Content="{DynamicResource WindowContentArea}"/>
-
-                                <!-- Bottom Bar -->
-                                <Border Grid.Row="2" x:Name="BottomBar" Background="{DynamicResource BottomBarBackground}" BorderBrush="{DynamicResource BottomBarBorderBrush}" 
-										BorderThickness="1,0" VerticalAlignment="Bottom" Height="20.8" />
                             </Grid>
                         </DockPanel>
                     </Border>
@@ -109,22 +94,22 @@
         <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+        <Setter Property="FontFamily" Value="{DynamicResource WindowFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ButtonFontSize}" />
         <Setter Property="SnapsToDevicePixels" Value="{DynamicResource ButtonSnapsToDevicePixels}" />
-        <Setter Property="Width" Value="{DynamicResource ButtonWidth}" />
-        <Setter Property="Height" Value="{DynamicResource ButtonHeight}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
 
         <!-- Button Template and Layout -->
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}" x:Name="ButtonTemplate">
+                <ControlTemplate TargetType="{x:Type Button}">
 
                     <!-- Basic Appearance -->
                     <Border x:Name="HighlightBorder" CornerRadius="1" BorderThickness="1" 
                             BorderBrush="{DynamicResource ButtonBorderBrush}" 
                             Background="{DynamicResource ButtonBackground}">
                         <Grid>
-                            <TextBlock x:Name="ButtonText" Text="{Binding Content, RelativeSource={RelativeSource AncestorType=Button}}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                            <TextBlock x:Name="ButtonText" Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
                         </Grid>
                     </Border>
 
@@ -160,29 +145,21 @@
             </LinearGradientBrush>
         </Style.Resources>
         
-        <Setter Property="Width" Value="26" />
-        <Setter Property="Height" Value="16" />
-        <Setter Property="BorderBrush" Value="#4C5258" />
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-                    <GradientStop Color="#1AE2EAF3" Offset="0.325"/>
-                    <GradientStop Color="#00B4C3DB" Offset="1"/>
-                    <GradientStop Color="#00E2EAF3"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="Background" Value="Transparent" />
 
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1,0,1,1" 
+                    <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0,0,0" 
                     Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}">
                         <Grid>
                             <Border x:Name="HighlightBorder">
-                                <ContentPresenter Content="{DynamicResource WindowButtonContent}" Margin="0,-1,0,0" />
+                                <ContentPresenter Content="{DynamicResource WindowButtonContent}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <Border x:Name="WhiteBorder" BorderBrush="#88FFFFFF" BorderThickness="1,0,1,1" />
+                            <Border BorderBrush="Black" BorderThickness="0,0,0,0" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -199,7 +176,7 @@
     <!-- Minimize Button Style -->
     <Style x:Key="MinimizeButton" TargetType="Button" BasedOn="{StaticResource WindowButton}">
         <Style.Resources>
-            <Border x:Key="WindowButtonContent" Width="12" Height="5" Margin="0,5,0,0" BorderBrush="#535666" BorderThickness="1" Background="#FFFFFF" />
+            <Border x:Key="WindowButtonContent" Width="12" Height="5" BorderBrush="#535666" BorderThickness="1" Background="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Style.Resources>
     </Style>
 

@@ -13,11 +13,11 @@ using System.Windows.Shapes;
 namespace KeyboardConcerto
 {
 	/// <summary>
-	/// Interaction logic for OpticWindow.xaml
+	/// Interaction logic for MacrosWindow.xaml
 	/// </summary>
-	public partial class OpticWindow : Window
+	public partial class MacrosWindow : Window
 	{
-		public OpticWindow()
+		public MacrosWindow()
 		{
 			this.InitializeComponent();
 			

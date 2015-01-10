@@ -9,8 +9,8 @@
         <GradientStop Color="#FF9B59B6" Offset="0.988"/>
         <GradientStop Color="#FF3498DB" Offset="0.288"/>
         </LinearGradientBrush>
-        <SolidColorBrush x:Key="WindowBorderBrush" Color="#55000000" />
-    <SolidColorBrush x:Key="TopBarBackground" Color="#FF000000" />
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="#55000000" />
+    <SolidColorBrush x:Key="TopBarBackground" Color="#FF141414" />
     <SolidColorBrush x:Key="TopBarBorderBrush" Color="Black" />
     <SolidColorBrush x:Key="TopBarForeground" Color="#FF3498DB" />
     <FontFamily x:Key="WindowFontFamily">OpenSans</FontFamily>
@@ -44,9 +44,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
                     
-                    <Border x:Name="MainBorder" BorderBrush="{DynamicResource WindowBorderBrush}"
-                            BorderThickness="0,0" CornerRadius="1">
-                        <DockPanel x:Name="DockPanel" Background="{DynamicResource WindowBackground}">
+                    <Border x:Name="MainBorder" BorderBrush="{DynamicResource WindowBorderBrush}" BorderThickness="0">
+                        <DockPanel x:Name="DockPanel">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -58,8 +57,8 @@
                                 </Grid.ColumnDefinitions>
                                 
                                 <!-- Top Bar -->
-                                <Border Grid.Row="0" x:Name="TopBar" Margin="0,0" Background="{DynamicResource TopBarBackground}" RenderTransformOrigin="0.5,0.5" 
-										Height="20" VerticalAlignment="Top" HorizontalAlignment="Stretch" MouseMove="TopBar_MouseMove">
+                                <Border Grid.Row="0" x:Name="TopBar" Margin="0,-1" Background="{DynamicResource TopBarBackground}" RenderTransformOrigin="0.5,0.5" 
+										Height="20" VerticalAlignment="Top" HorizontalAlignment="Stretch" CornerRadius="2,2,0,0" MouseMove="TopBar_MouseMove">
                                     <Border HorizontalAlignment="Stretch" VerticalAlignment="Center" >
                                         <Grid>
                                             <Grid.RowDefinitions>
@@ -73,14 +72,16 @@
                                                        FontSize="{DynamicResource WindowFontSize}" FontFamily="{DynamicResource WindowFontFamily}"/>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                                 <Button x:Name="MinimizeButton" Style="{DynamicResource MinimizeButton}" Click="OnMinimizeButton_Click" />
-                                                <Button x:Name="CloseButton" Style="{DynamicResource CloseButton}" Click="OnCloseButton_Click" />
+                                                <Button x:Name="CloseButton" Style="{DynamicResource CloseButton}" Click="OnCloseButton_Click" Margin="4,0,4,0" />
                                             </StackPanel>
                                         </Grid>
                                     </Border>
                                 </Border>
                                 
                                 <!-- Content Area -->
-                                <ContentPresenter Grid.Row="1" Content="{DynamicResource WindowContentArea}"/>
+                                <Border Grid.Row="1" Background="{DynamicResource WindowBackground}">
+                                    <ContentPresenter Content="{DynamicResource WindowContentArea}"/>
+                                </Border>
                             </Grid>
                         </DockPanel>
                     </Border>
@@ -134,18 +135,7 @@
     </Style>
     
     <!-- Window Button Basic Styling -->
-    <Style x:Key="WindowButton"  TargetType="{x:Type Button}">
-        <Style.Resources>
-            <LinearGradientBrush x:Key="WindowButtonHighlight" StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#ADCEE8" Offset="0" />
-                <GradientStop Color="#70A3C7" Offset="0.45" />
-                <GradientStop Color="#1E6FA5" Offset="0.45" />
-                <GradientStop Color="#2782B4" Offset="0.80" />
-                <GradientStop Color="#17FBFA" Offset="1" />
-            </LinearGradientBrush>
-        </Style.Resources>
-        
-        <Setter Property="Width" Value="20" />
+    <Style x:Key="WindowButton" TargetType="{x:Type Button}">
         <Setter Property="Height" Value="20" />
         <Setter Property="BorderBrush" Value="Black" />
         <Setter Property="Background" Value="Transparent" />
@@ -156,16 +146,16 @@
                     <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0,0,0" 
                     Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}">
                         <Grid>
-                            <Border x:Name="HighlightBorder">
-                                <ContentPresenter Content="{DynamicResource WindowButtonContent}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Border>
+                                <ContentPresenter x:Name="ButtonIcon" Content="{DynamicResource WindowButtonContent}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <Border BorderBrush="Black" BorderThickness="0,0,0,0" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="HighlightBorder" Property="Background" 
-                                    Value="{DynamicResource WindowButtonHighlight}" />
+                            <Setter TargetName="ButtonIcon" Property="Content" 
+                                    Value="{DynamicResource WindowButtonContentHighlight}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -176,21 +166,53 @@
     <!-- Minimize Button Style -->
     <Style x:Key="MinimizeButton" TargetType="Button" BasedOn="{StaticResource WindowButton}">
         <Style.Resources>
-            <Border x:Key="WindowButtonContent" Width="12" Height="5" BorderBrush="#535666" BorderThickness="1" Background="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Image x:Key="WindowButtonContent" Source="pack://application:,,,/KeyboardConcerto;Component/Theme/Images/MinimizeButton.png" Width="13" Height="10" />
+            <Image x:Key="WindowButtonContentHighlight" Source="pack://application:,,,/KeyboardConcerto;Component/Theme/Images/MiniMizeButtonHighlight.png" Width="13" Height="10" />
         </Style.Resources>
     </Style>
 
     <!-- Close Button Style -->
     <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource WindowButton}">
         <Style.Resources>
-            <Image x:Key="WindowButtonContent" Source="pack://application:,,,/KeyboardConcerto;Component/Theme/Images/buttonX.png" Width="13" Height="10" />
-            <LinearGradientBrush x:Key="WindowButtonHighlight" StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Offset="0" Color="#F89C8C" />
-                <GradientStop Offset="0.45" Color="#E36A53" />
-                <GradientStop Offset="0.45" Color="#C72B0E" />
-                <GradientStop Offset="0.75" Color="#D44310" />
-                <GradientStop Offset="1" Color="#F5E478" />
-            </LinearGradientBrush>
+            <Image x:Key="WindowButtonContent" Source="pack://application:,,,/KeyboardConcerto;Component/Theme/Images/CloseButton.png" Width="13" Height="10" />
+            <Image x:Key="WindowButtonContentHighlight" Source="pack://application:,,,/KeyboardConcerto;Component/Theme/Images/CloseButtonHighlight.png" Width="13" Height="10" />
         </Style.Resources>
+    </Style>
+    
+    <Style x:Key="CircleWindowButton" TargetType="Button">
+        <Setter Property="Width" Value="15" />
+        <Setter Property="Height" Value="14" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Ellipse>
+                            <Ellipse.Stroke>
+                                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                    <GradientStop Offset="0.8" Color="#FF141414" />
+                                    <GradientStop Offset="1" Color="#FF3C3C3C" />
+                                </LinearGradientBrush>
+                            </Ellipse.Stroke>
+                            <Ellipse.Fill>
+                                <RadialGradientBrush GradientOrigin="0.5,0.9" Center="0.5,0.8" RadiusX="1" RadiusY="0.8">
+                                    <GradientStop Offset="1" Color="#FF1B1B1B" />
+                                    <GradientStop Offset="-0.3" Color="#FF3C3C3C" />
+                                </RadialGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Ellipse Width="8" Height="8" Stroke="#FF111111">
+                            <Ellipse.Fill>
+                                <RadialGradientBrush GradientOrigin="0.5,0.9" Center="0.5,0.8" RadiusX="1" RadiusY="0.8">
+                                    <GradientStop Offset="0" Color="Gray" />
+                                    <GradientStop Offset="1" Color="LightGray" />
+                                </RadialGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>

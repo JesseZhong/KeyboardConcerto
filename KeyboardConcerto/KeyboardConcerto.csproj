@@ -141,7 +141,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Theme\Images\buttonX.png" />
+    <Resource Include="Theme\Images\CloseButtonHighlight.png" />
+    <Resource Include="Theme\Images\MinimizeButton.png" />
+    <Resource Include="Theme\Images\MinimizeButtonHighlight.png" />
+    <Resource Include="Theme\Images\CloseButton.png" />
     <Content Include="Notes\LParamBreakdown.txt" />
     <Content Include="Notes\Items.txt" />
   </ItemGroup>

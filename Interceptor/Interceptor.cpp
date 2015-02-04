@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <stdio.h>
+#include <iostream>
 #include "Interceptor.h"
 
 #pragma data_seg (".SHARED")
@@ -34,6 +35,7 @@ LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
 
 	// Report the event to the main window. If the return value is 1, block the input; otherwise pass it along the Hook Chain
 	if (SendMessage(hwndServer, WM_HOOK, wParam, lParam)) {
+		std::cout << "WE MADE IT!" << std::endl;
 		return 1;
 	}
 

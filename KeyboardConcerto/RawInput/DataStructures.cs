@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace KeyboardConcerto.RawInput {
@@ -63,6 +64,16 @@ namespace KeyboardConcerto.RawInput {
 		//Int32 dbcc_reserved;
 		public Guid dbcc_classguid;
 		//public char dbcc_name;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct NativeMessage {
+		public IntPtr HWnd;
+		public uint Msg;
+		public IntPtr WParam;
+		public IntPtr LParam;
+		public uint Time;
+		public Point Pos;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

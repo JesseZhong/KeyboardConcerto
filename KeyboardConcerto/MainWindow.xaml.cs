@@ -4,17 +4,24 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Windows;
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.ComponentModel;
+using System.Windows.Interop;
+using System.Windows.Controls;
 using System.Collections.Generic;
-using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
+using KeyboardConcerto.Theme;
 using KeyboardConcerto.RawInput;
 #endregion
 
 namespace KeyboardConcerto {
-	public partial class MainForm : Form {
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window {
 
 		#region Constants
 		/// <summary>
@@ -27,13 +34,13 @@ namespace KeyboardConcerto {
 		#endregion
 
 		#region Members
+		private IntPtr mHandle;
+
 		private static RawKeyboard mKeyboardDriver;
-		private readonly IntPtr mDeviceNotifyHandle;
+		private IntPtr mDeviceNotifyHandle;
 		private static readonly Guid mDeviceInterfaceHID = new Guid("4D1E55B2-F16F-11CF-88CB-001111000030");
-		private PreMessageFilter mFilter;
 
 		private UserSettings mUserSettings;
-
 		private Deque<Decision> mDecisionQueue;
 		#endregion
 
@@ -41,23 +48,56 @@ namespace KeyboardConcerto {
 		/// <summary>
 		/// Initialize the form's components, input handling, and memory.
 		/// </summary>
-		public MainForm() {
+		public MainWindow() {
 			this.InitializeComponent();
 			this.mDecisionQueue = new Deque<Decision>();
-			AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
-			IntPtr accessHandle = this.Handle; // Ensure that the handle is created.
-
-			mKeyboardDriver = new RawKeyboard(this.Handle);
-			mKeyboardDriver.EnumerateDevices();
-			mKeyboardDriver.CaptureOnlyIfTopMostWindow = false;
-			mDeviceNotifyHandle = RegisterForDeviceNotifications(this.Handle);
-			Application.AddMessageFilter(this.mFilter = new PreMessageFilter(this.ProcessKeyboard));
-
 			this.mUserSettings = new UserSettings();
 
-			InstallHook(this.Handle);
+			this.Closing += new CancelEventHandler(this.OnWindowClosing);
+
+			AppDomain.CurrentDomain.UnhandledException 
+				+= new UnhandledExceptionEventHandler(this.CurrentDomain_UnhandledException);
 
 			Win32.DeviceAudit();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="hwnd"></param>
+		private void InitializeGlass(IntPtr hWnd) {
+			if (!Win32Interop.DwmIsCompositionEnabled())
+				return;
+
+			// fill the background with glass
+			var margins = new MARGINS();
+			margins.cxLeftWidth = margins.cxRightWidth = margins.cyBottomHeight = margins.cyTopHeight = -1;
+			Win32Interop.DwmExtendFrameIntoClientArea(hWnd, ref margins);
+		}
+
+		/// <summary>
+		/// Initialize the hooks for keyboard and wndproc. Grabs the window handle as well.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnSourceInitialized(EventArgs e) {
+			base.OnSourceInitialized(e);
+			HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+
+			source.AddHook(WndProc);
+
+			this.mHandle = source.Handle;
+
+			if (Environment.OSVersion.Version.Major >= 6) {
+				source.CompositionTarget.BackgroundColor = Colors.Transparent;
+				this.InitializeGlass(this.mHandle);
+			}
+
+			mKeyboardDriver = new RawKeyboard(this.mHandle);
+			mKeyboardDriver.EnumerateDevices();
+			mKeyboardDriver.CaptureOnlyIfTopMostWindow = false;
+			mDeviceNotifyHandle = RegisterForDeviceNotifications(this.mHandle);
+
+			InstallHook(this.mHandle);
 		}
 
 		/// <summary>
@@ -90,97 +130,70 @@ namespace KeyboardConcerto {
 
 			return usbNotifyHandle;
 		}
-
-		/// <summary>
-		/// Ensure that the messages are still received when the form is minimized.
-		/// </summary>
-		/// <param name="e"></param>
-		protected override void OnHandleCreated(EventArgs e) {
-			base.OnHandleCreated(e);
-			IntPtr HWND_MESSAGE = new IntPtr(-3);
-			SetParent(this.Handle, HWND_MESSAGE);
-		}
 		#endregion
-		
+
 		#region Keyboard Processing
 		/// <summary>
 		/// Tests raw input and stores the result to be applied later.
+		/// <para><b>WARNING: DO NOT USE/ATTACH DEBUGGER!! THE APPLICATION WILL HANG INDEFINITELY.</b></para>
 		/// </summary>
 		/// <param name="keyPressEvent">Raw input event.</param>
 		private void ProcessKeyboard(KeyPressEvent keyPressEvent) {
 			this.mDecisionQueue.AddToBack(new Decision() {
-				Key = (Keys)keyPressEvent.VKey,
+				Key = (VirtualKeys)keyPressEvent.VKey,
 				State = keyPressEvent.KeyPressState,
 				Allow = !this.mUserSettings.ProcessInput(keyPressEvent)
 			});
 		}
 
 		/// <summary>
-		/// Pre-filters windows messages for WM_INPUT/raw input.
+		/// Processes all WM_INPUT and WM_HOOK messages sent from windows and the interceptor, respectively.
+		/// <para>Determines whether certain user input will be allowed or blocked depending on UserSettings.</para>
 		/// </summary>
-		private class PreMessageFilter : IMessageFilter {
-
-			public delegate void ProcessKeyboard(KeyPressEvent keyPressEvent);
-			private ProcessKeyboard mProcessKeyboard;
-
-			/// <summary>
-			/// Initializes the filter with the keyboard processing method.
-			/// </summary>
-			/// <param name="processKeyboard">Raw input process method.</param>
-			public PreMessageFilter(ProcessKeyboard processKeyboard) {
-				this.mProcessKeyboard = processKeyboard;
-			}
-
-			/// <summary>
-			/// Pre-filters message for raw input and processes it.
-			/// </summary>
-			/// <param name="msg">Message that needs processing.</param>
-			/// <returns>True if the message is a WM_INPUT message.</returns>
-			public bool PreFilterMessage(ref Message msg) {
-				if (msg.Msg != Win32.WM_INPUT) {
-					// Allow any non WM_INPUT message to pass through
-					return false;
-				}
-				KeyPressEvent keyPressEvent;
-				bool result = mKeyboardDriver.ProcessRawInput(msg.LParam, out keyPressEvent);
-				if (mKeyboardDriver.ProcessRawInput(msg.LParam, out keyPressEvent)) {
-					if (this.mProcessKeyboard != null)
-						this.mProcessKeyboard(keyPressEvent);
-				}
-				return result;
-			}
-		}
-
-		/// <summary>
-		/// Processes and intercepts user input.
-		/// </summary>
-		/// <param name="msg">Windows message.</param>
-		[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
-		protected override void WndProc(ref Message msg) {
-			base.WndProc(ref msg);
-
-			switch (msg.Msg) {
+		/// <param name="hWnd">The window handle.</param>
+		/// <param name="msg">A windows message.</param>
+		/// <param name="wParam">
+		/// Word param for the message. 
+		/// Carries the input code (irrelevant to this implementation) for WM_INPUT.
+		/// Carries the virtual key of the hooked user input/key press.
+		/// </param>
+		/// <param name="lParam">
+		/// Long param for the message.
+		/// Carries the RAWINPUT structure that contains raw input information.
+		/// Carries the flags of the hooked user input/key press, such as key state.
+		/// </param>
+		/// <param name="handled">
+		/// Indicates if the message is handled by this method call. Must be set 
+		/// to true in order for the return value to be considered by the callback.
+		/// </param>
+		/// <returns>0 to allow input and 1 to deny input.</returns>
+		private IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
+			switch (msg) {
+				#region Win32.WM_INPUT
 				case Win32.WM_INPUT: {
 						// Should never get here if you are using PreMessageFiltering
 						KeyPressEvent keyPressEvent;
-						if (mKeyboardDriver.ProcessRawInput(msg.LParam, out keyPressEvent)) {
+						if (mKeyboardDriver.ProcessRawInput(lParam, out keyPressEvent)) {
 							this.ProcessKeyboard(keyPressEvent);
 						}
-						return;
+						return (IntPtr)0;
 					}
-
+				#endregion
+				#region Win32.WM_USB_DEVICECHANGE
 				case Win32.WM_USB_DEVICECHANGE: {
 						Debug.WriteLine("USB Device Arrival / Removal");
 						mKeyboardDriver.EnumerateDevices();
-						return;
+						return (IntPtr)0;
 					}
-
+				#endregion
+				#region WM_HOOK
 				case WM_HOOK: {
+					handled = true;
 						const string makeStr = "MAKE";
 						const string breakStr = "BREAK";
-						long lparam = (long)msg.LParam;
+						long lparam = (long)lParam;
 
-						Keys key = (Keys)(uint)msg.WParam;
+						VirtualKeys key = (VirtualKeys)(uint)wParam;
 						string state = ((lparam >> 31 & 0x1) == 1) ? breakStr : makeStr;		// WM_DOWN is 0; WM_UP is 1
 
 						// Search if there's a corresponding raw input decision.
@@ -188,32 +201,30 @@ namespace KeyboardConcerto {
 						for (int i = 0, count = this.mDecisionQueue.Count; i < count; i++) {
 							Decision decision = this.mDecisionQueue.RemoveFromFront();
 							if ((decision.Key == key) && (decision.State == state)) {
-								msg.Result = decision.Allow ? (IntPtr)0 : (IntPtr)1;
-								return;
+								return decision.Allow ? (IntPtr)0 : (IntPtr)1;
 							}
 						}
 
 						Stopwatch sw = new Stopwatch();
 						sw.Start();
 						while (true) {
-							Message rawMsg = new Message();
-							while (!Win32.PeekMessage(ref rawMsg, this.Handle, Win32.WM_INPUT, Win32.WM_INPUT, Win32.PM_REMOVE)) {
+							NativeMessage rawMsg = new NativeMessage();
+							while (!Win32.PeekMessage(out rawMsg, hWnd, Win32.WM_INPUT, Win32.WM_INPUT, Win32.PM_REMOVE)) {
 								if (MAX_WAIT_TIME < sw.ElapsedMilliseconds) {
 									sw.Stop();
-									return;
+									return (IntPtr)0;
 								}
 							}
 
 							KeyPressEvent keyPressEvent;
 							if (mKeyboardDriver.ProcessRawInput(rawMsg.LParam, out keyPressEvent)) {
-								Keys riKey = (Keys)keyPressEvent.VKey;
+								VirtualKeys riKey = (VirtualKeys)keyPressEvent.VKey;
 								string riState = keyPressEvent.KeyPressState;
 								bool riAllow = !this.mUserSettings.ProcessInput(keyPressEvent);
 
 								if ((riKey == key) && (riState == state)) {
-									msg.Result = riAllow ? (IntPtr)0 : (IntPtr)1;
 									sw.Stop();
-									return;
+									return riAllow ? (IntPtr)0 : (IntPtr)1;
 								} else {
 									this.mDecisionQueue.AddToBack(new Decision() {
 										Key = riKey,
@@ -224,37 +235,36 @@ namespace KeyboardConcerto {
 							}
 						}
 					}
-
+				#endregion
+				#region Win32Interop.WM_DWMCOMPOSITIONCHANGED
+				case Win32Interop.WM_DWMCOMPOSITIONCHANGED:
+					this.InitializeGlass(hWnd);
+					handled = false;
+					return (IntPtr)0;
+				#endregion
 				default:
-					return;
+					return (IntPtr)0;
 			}
 		}
 		#endregion
 
-		#region Program Entry Point
+		#region Button Event Handling
 		/// <summary>
-		/// The main entry point for the application.
+		/// 
 		/// </summary>
-		[STAThread]
-		public static void Main() {
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainForm());
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void OnMacrosButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+			// TODO: Add event handler implementation here.
 		}
-		#endregion
 
-		#region Managing Resources
 		/// <summary>
-		/// Release unmanaged resources.
+		/// 
 		/// </summary>
-		public new void Dispose() {
-			if (this.IsDisposed)
-				return;
-
-			Win32.UnregisterDeviceNotification(mDeviceNotifyHandle);
-			UninstallHook();
-
-			base.Dispose();
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void OnSettingsButton_Click(object sender, System.Windows.RoutedEventArgs e) {
+			// TODO: Add event handler implementation here.
 		}
 		#endregion
 
@@ -268,13 +278,19 @@ namespace KeyboardConcerto {
 			// you may have more insight as to why the exception is being thrown.
 			Debug.WriteLine("Unhandled Exception: " + ex.Message);
 			Debug.WriteLine("Unhandled Exception: " + ex);
-			MessageBox.Show(ex.Message);
 		}
 		#endregion
 
-		#region Windows API
-		[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+		#region Destruction
+		private void OnWindowClosing(object sender, EventArgs e) {
+
+			Win32.UnregisterDeviceNotification(mDeviceNotifyHandle);
+			UninstallHook();
+
+			IntPtr windowHandle = (new WindowInteropHelper(this)).Handle;
+			HwndSource src = HwndSource.FromHwnd(windowHandle);
+			src.RemoveHook(new HwndSourceHook(this.WndProc));
+		}
 		#endregion
 
 		#region Hooking
@@ -283,10 +299,10 @@ namespace KeyboardConcerto {
 		/// </summary>
 		private const int WM_HOOK = 0x8001;
 
-		[DllImport("Interceptor.dll")]
+		[DllImport("Interceptor.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern bool InstallHook(IntPtr hWndParent);
 
-		[DllImport("Interceptor.dll")]
+		[DllImport("Interceptor.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern bool UninstallHook();
 		#endregion
 	}

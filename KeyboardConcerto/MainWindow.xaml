@@ -1,0 +1,25 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		x:Class="KeyboardConcerto.MainWindow" Title="Concerto"
+		Width="120" Height="320" Style="{DynamicResource OpticWindow}">
+    <Window.Resources>
+        <sys:Double x:Key="ButtonHeight">80</sys:Double>
+        
+        <Grid x:Key="WindowContentArea" Margin="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Row="0" Content="Macros" Click="OnMacrosButton_Click" Height="{DynamicResource ButtonHeight}" />
+            <Button Grid.Row="1" Content="Settings" Click="OnSettingsButton_Click" Height="{DynamicResource ButtonHeight}" />
+        </Grid>
+    </Window.Resources>
+</Window>

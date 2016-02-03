@@ -24,6 +24,18 @@ namespace KeyboardConcerto {
 		private EState mState;
 		#endregion
 
+		#region Constructor
+		/// <summary>
+		/// Initialization constructor.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="state"></param>
+		public ExecVKey(VirtualKeyCode key, EState state) {
+			this.mKey = key;
+			this.mState = state;
+		}
+		#endregion
+
 		#region Properties
 		/// <summary>
 		/// Virtual key that needs to be simulated.

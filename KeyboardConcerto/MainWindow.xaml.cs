@@ -42,6 +42,8 @@ namespace KeyboardConcerto {
 
 		private UserSettings mUserSettings;
 		private Deque<Decision> mDecisionQueue;
+
+		private MacrosWindow mMacrosWindow;
 		#endregion
 
 		#region Initialization
@@ -59,6 +61,10 @@ namespace KeyboardConcerto {
 				+= new UnhandledExceptionEventHandler(this.CurrentDomain_UnhandledException);
 
 			Win32.DeviceAudit();
+
+			this.InitializeMacrosWindow();
+
+			this.mUserSettings = KeyboardConcerto.Tests.UserSettingsTests.BasicUserSettings();
 		}
 
 		/// <summary>
@@ -129,6 +135,15 @@ namespace KeyboardConcerto {
 			}
 
 			return usbNotifyHandle;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		protected void InitializeMacrosWindow() {
+			this.mMacrosWindow = new MacrosWindow();
+			this.mMacrosWindow.InitializeComponent();
+			this.mMacrosWindow.Hide();
 		}
 		#endregion
 
@@ -256,6 +271,10 @@ namespace KeyboardConcerto {
 		/// <param name="e"></param>
 		private void OnMacrosButton_Click(object sender, System.Windows.RoutedEventArgs e) {
 			// TODO: Add event handler implementation here.
+			if (!this.mMacrosWindow.IsVisible)
+				this.mMacrosWindow.Show();
+			else
+				this.mMacrosWindow.Activate();
 		}
 
 		/// <summary>

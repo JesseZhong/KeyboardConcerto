@@ -89,6 +89,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tests\UserSettingsTests.cs" />
     <Compile Include="Theme\Win32Interop.cs" />
     <Compile Include="Deque.cs" />
     <Compile Include="MacrosWindow.xaml.cs">

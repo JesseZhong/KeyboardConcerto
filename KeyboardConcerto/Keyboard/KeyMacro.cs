@@ -38,6 +38,14 @@ namespace KeyboardConcerto {
 		}
 
 		/// <summary>
+		/// Initialization constructor for an execution sequence.
+		/// </summary>
+		/// <param name="executionSequence"></param>
+		public KeyMacro(LinkedList<ExecNode> executionSequence) {
+			this.mExecutionSequence = executionSequence;
+		}
+
+		/// <summary>
 		/// Executes the user defined key sequence.
 		/// </summary>
 		/// <returns>True if sequence finished successfully.</returns>

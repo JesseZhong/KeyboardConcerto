@@ -1,0 +1,1 @@
+﻿Add device name of the testing keyboard (Logitech K200 or other) to the UserTest.

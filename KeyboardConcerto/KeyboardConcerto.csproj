@@ -142,6 +142,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Notes\TODO.txt" />
     <Resource Include="Theme\Images\CloseButtonHighlight.png" />
     <Resource Include="Theme\Images\MinimizeButton.png" />
     <Resource Include="Theme\Images\MinimizeButtonHighlight.png" />

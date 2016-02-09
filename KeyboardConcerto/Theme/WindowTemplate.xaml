@@ -80,7 +80,7 @@
                                 
                                 <!-- Content Area -->
                                 <Border Grid.Row="1" Background="{DynamicResource WindowBackground}">
-                                    <ContentPresenter Content="{DynamicResource WindowContentArea}"/>
+                                    <ContentPresenter Content="{Binding ElementName=WindowContentArea, Path=.}"/>
                                 </Border>
                             </Grid>
                         </DockPanel>

@@ -159,6 +159,8 @@ namespace KeyboardConcerto {
 				State = keyPressEvent.KeyPressState,
 				Allow = !this.mUserSettings.ProcessInput(keyPressEvent)
 			});
+			
+			this.InputBox.Text = keyPressEvent.DeviceName;
 		}
 
 		/// <summary>

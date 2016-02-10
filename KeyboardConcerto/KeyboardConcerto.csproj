@@ -104,7 +104,7 @@
     <Compile Include="Keyboard\ExecutionSequence\ExecNode.cs" />
     <Compile Include="Keyboard\ExecutionSequence\ExecTimer.cs" />
     <Compile Include="Keyboard\ExecutionSequence\ExecVKey.cs" />
-    <Compile Include="Keyboard\KeyboardMacros.cs" />
+    <Compile Include="Keyboard\KeyboardProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Keyboard\KeyMacro.cs" />
     <Compile Include="RawInput\Enumerations.cs" />
@@ -142,7 +142,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Notes\TODO.txt" />
+    <Resource Include="Notes\Issues.txt" />
     <Resource Include="Theme\Images\CloseButtonHighlight.png" />
     <Resource Include="Theme\Images\MinimizeButton.png" />
     <Resource Include="Theme\Images\MinimizeButtonHighlight.png" />

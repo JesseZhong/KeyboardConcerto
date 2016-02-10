@@ -1,0 +1,20 @@
+﻿[Done] Add device name of the testing keyboard (Logitech K200 or other) to the UserTest. >> For ASUS laptop
+       Issue: Multiple hardware ids listed by the OS (via Device Manager). Need to distinguish 
+	          which id to use.
+       Fix: Used the DeviceNameBox to discover the name of the keyboard (as hooked by the Intercepter). 
+	        Added a fake keyboard to test against (test control).
+
+[Done] Stop UserSettings.ProcessInput() from firing twice.
+       Issue: The program isn't distinguishing different input types (press, down, up); 
+		      design flaw. A normal key press features a 'down' event and an 'up' event.
+			  Both fire a key macro that for any given key, therefore invoking the macro
+			  twice.
+	   Fix: Added an extra layer that tests for the key press state of the keyboard input.
+
+[Done] Fix execution sequence so that it fires when UserSettings.ProcessInput() is called.
+       Issue: When hotkey is pressed, the input is blocked at the OS (message queue) level.
+	          However, the macros aren't firing. UserSettings.ProcessInput() is fired, but
+			  the KeyMacro.Execute() does not procure.
+       Fix: Logic error within the KeyMacro.Execute() method. When testing for whether or 
+	        not the execution sequence (mExecutionSequence) was assigned or not, the wrong
+			comparison operator was used (!= instead of ==); coding error.

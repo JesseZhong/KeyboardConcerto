@@ -50,7 +50,7 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <returns>True if sequence finished successfully.</returns>
 		public bool Execute() {
-			if((this.mExecutionSequence != null) || !this.mExecutionSequence.Any())
+			if((this.mExecutionSequence == null) || !this.mExecutionSequence.Any())
 				return false;
 
 			LinkedListNode<ExecNode> currNode = this.mExecutionSequence.First;

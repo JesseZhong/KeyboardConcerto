@@ -160,7 +160,11 @@ namespace KeyboardConcerto {
 				Allow = !this.mUserSettings.ProcessInput(keyPressEvent)
 			});
 			
-			this.InputBox.Text = keyPressEvent.DeviceName;
+			// [TESTING] Prints out the user input's origin device's name.
+			this.DeviceNameBox.Text = keyPressEvent.DeviceName;
+
+			// [TESTING] Prints out the state of the key.
+			this.KeyStateBox.Text = keyPressEvent.KeyPressState;
 		}
 
 		/// <summary>

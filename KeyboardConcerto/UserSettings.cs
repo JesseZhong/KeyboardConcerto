@@ -18,7 +18,7 @@ namespace KeyboardConcerto {
 	public class UserSettings {
 
 		#region Members
-		private Dictionary<string, KeyboardMacros> mKeyboardProfiles;
+		private Dictionary<string, KeyboardProfile> mKeyboardProfiles;
 		#endregion
 
 		#region Methods
@@ -27,34 +27,58 @@ namespace KeyboardConcerto {
 		/// Attempts to add a new execution sequence given the device name, key, and sequence.
 		/// If an entry already exists, it will overwrite the existing execution sequence.
 		/// </summary>
-		/// <param name="deviceName"></param>
-		/// <param name="key"></param>
-		/// <param name="executionSequence"></param>
-		public void AddEntry(string deviceName, VirtualKeys key, LinkedList<ExecNode> executionSequence) {
+		/// <param name="deviceName">The name of the keyboard device.</param>
+		/// <param name="key">The virtual key for the macro.</param>
+		/// <param name="keyState">The key state for the macro.</param>
+		/// <param name="executionSequence">The execution sequence for the macro.</param>
+		public void AddEntry(string deviceName, VirtualKeys key, string keyState, LinkedList<ExecNode> executionSequence) {
 
-			System.Diagnostics.Debug.Assert(this.mKeyboardProfiles != null);
-			if (this.mKeyboardProfiles.ContainsKey(deviceName)) {
+			// Check if the device exists in the profile dictionary.
+			KeyboardProfile keyboardProfile;
+			if(this.mKeyboardProfiles.TryGetValue(deviceName, out keyboardProfile)) {
 
-				KeyboardMacros macros = this.mKeyboardProfiles[deviceName];
+				// Check if the macro set exists in the current keyboard profile.
+				KeyMacroSet macroSet;
+				if (keyboardProfile.TryGetValue(key, out macroSet)) {
 
-				System.Diagnostics.Debug.Assert(macros != null);
-				if(macros.ContainsKey(key)) {
+					// Check if the macro exists in the current macro set.
+					KeyMacro macro;
+					if(macroSet.TryGetValue(keyState, out macro)) {
 
-					KeyMacro macro = macros[key];
+					} else {
 
-					System.Diagnostics.Debug.Assert(macro != null);
-					macro.ExecutionSequence = executionSequence;
+						// Add a new macro to the current macro set.
+						macroSet.Add(keyState, new KeyMacro(executionSequence));
+					}
 
 				} else {
 
-					macros.Add(key, new KeyMacro(executionSequence));
+					// Create a new macro set to add to the current keyboard profile.
+					macroSet = new KeyMacroSet();
+
+					// Add a new macro to the macro set.
+					macroSet.Add(keyState, new KeyMacro(executionSequence));
+
+					// Add the macro set to the current profile.
+					keyboardProfile.Add(key, macroSet);
 				}
 
 			} else {
 
-				KeyboardMacros macros = new KeyboardMacros();
-				macros.Add(key, new KeyMacro(executionSequence));
-				this.mKeyboardProfiles.Add(deviceName, macros);
+				// Create a new profile to add the profiles dictionary.
+				keyboardProfile = new KeyboardProfile();
+
+				// Create a new macro set to add to the profile.
+				KeyMacroSet macroSet = new KeyMacroSet();
+
+				// Add the new entry <KeyState, KeyMacro> to the macro set.
+				macroSet.Add(keyState, new KeyMacro(executionSequence));
+
+				// Add the macro set to a newly created profile for the given key. 
+				keyboardProfile.Add(key, macroSet);
+
+				// Add the new profile to the profile dictionary.
+				this.mKeyboardProfiles.Add(deviceName, keyboardProfile);
 			}
 		}
 
@@ -63,36 +87,33 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <param name="deviceName">Name of the keyboard device.</param>
 		/// <param name="key">Virtual key in question.</param>
+		/// <param name="keyState">Key state in question.</param>
 		/// <param name="executionSequence">Returned execution sequence.</param>
 		/// <returns>True if the device name and key were found.</returns>
-		public bool FindEntry(string deviceName, VirtualKeys key, out LinkedList<ExecNode> executionSequence) {
+		public bool FindEntry(string deviceName, VirtualKeys key, string keyState, out LinkedList<ExecNode> executionSequence) {
 
-			// Checks if the device name exists. Return false and null if it doesn't.
-			System.Diagnostics.Debug.Assert(this.mKeyboardProfiles != null);
-			if (!this.mKeyboardProfiles.ContainsKey(deviceName)) {
-				executionSequence = null;
-				return false;
+			// Check if the device exists in the profile dictionary.
+			KeyboardProfile keyboardProfile;
+			if (this.mKeyboardProfiles.TryGetValue(deviceName, out keyboardProfile)) {
+
+				// Check if the macro set exists in the current keyboard profile.
+				KeyMacroSet macroSet;
+				if (keyboardProfile.TryGetValue(key, out macroSet)) {
+
+					// Check if the macro exists in the current macro set.
+					KeyMacro macro;
+					if (macroSet.TryGetValue(keyState, out macro)) {
+
+						// Return the execution sequence and true if the macro is found.
+						executionSequence = macro.ExecutionSequence;
+						return true;
+					}
+				}
 			}
 
-			// Load macros for the found device name.
-			KeyboardMacros macros = this.mKeyboardProfiles[deviceName];
-
-			// Checks if the macro exists for the virtual key. Return false and null if it doesn't.
-			System.Diagnostics.Debug.Assert(macros != null);
-			if(!macros.ContainsKey(key)) {
-				executionSequence = null;
-				return false;
-			}
-
-			// Load the macro for the specific key.
-			KeyMacro macro = macros[key];
-
-			// Out the execution sequence.
-			System.Diagnostics.Debug.Assert(macro != null);
-			System.Diagnostics.Debug.Assert(macro.ExecutionSequence != null);
-			executionSequence = macro.ExecutionSequence;
-
-			return true;
+			// Return null and false if the macro is not found.
+			executionSequence = null;
+			return false;
 		}
 
 		/// <summary>
@@ -102,30 +123,41 @@ namespace KeyboardConcerto {
 		/// <param name="deviceName">Name of the keyboard device.</param>
 		/// <param name="key">Virtual key in question.</param>
 		/// <returns>True if the macro was successfully removed.</returns>
-		public bool RemoveEntry(string deviceName, VirtualKeys key) {
+		public bool RemoveEntry(string deviceName, VirtualKeys key, string keyState) {
 
-			// Check if there are any keyboard macros under the given device name.
-			System.Diagnostics.Debug.Assert(this.mKeyboardProfiles != null);
-			if (!this.mKeyboardProfiles.ContainsKey(deviceName))
-				return false;
+			// Check if the device exists in the profile dictionary.
+			KeyboardProfile keyboardProfile;
+			if (this.mKeyboardProfiles.TryGetValue(deviceName, out keyboardProfile)) {
 
-			// Load the macros if they exist.
-			KeyboardMacros macros = this.mKeyboardProfiles[deviceName];
+				// Check if the macro set exists in the current keyboard profile.
+				KeyMacroSet macroSet;
+				if (keyboardProfile.TryGetValue(key, out macroSet)) {
 
-			// Check if there is a macro for the specified key.
-			System.Diagnostics.Debug.Assert(macros != null);
-			if (!macros.ContainsKey(key))
-				return false;
+					// Attempt to remove the macro.
+					if(macroSet.Remove(keyState)) {
 
-			// Remove the corresponding macro for the key.
-			macros.Remove(key);
+						// If macro was found and remove, check if there are any more macros.
+						if(!macroSet.Any()) {
 
-			// Remove macros dictionary for the specific device if there are no macros left.
-			if (!macros.Any()) {
-				this.mKeyboardProfiles.Remove(deviceName);
+							// Remove the macro set from the keyboard profile.
+							keyboardProfile.Remove(key);
+
+							// Check if there are any macros left in the profile.
+							if(!keyboardProfile.Any()) {
+
+								// Remove the profile if there are no profiles left.
+								this.mKeyboardProfiles.Remove(deviceName);
+							}
+						}
+
+						// Return true for a successful removal.
+						return true;
+					}
+				}
 			}
-			
-			return true;
+
+			// Return false if the macro is not found.
+			return false;
 		}
 		#endregion
 
@@ -133,7 +165,7 @@ namespace KeyboardConcerto {
 		/// <summary>
 		/// Stores all of the user defined settings for their keyboards.
 		/// </summary>
-		public Dictionary<string, KeyboardMacros> KeyboardProfiles {
+		public Dictionary<string, KeyboardProfile> KeyboardProfiles {
 			get {
 				return this.mKeyboardProfiles;
 			}
@@ -148,7 +180,7 @@ namespace KeyboardConcerto {
 		/// Initializes keyboard profile container.
 		/// </summary>
 		public UserSettings() {
-			this.mKeyboardProfiles = new Dictionary<string, KeyboardMacros>();
+			this.mKeyboardProfiles = new Dictionary<string, KeyboardProfile>();
 		}
 		#endregion
 
@@ -162,16 +194,21 @@ namespace KeyboardConcerto {
 		public bool ProcessInput(KeyPressEvent keyPressEvent) {
 
 			// Check for keyboard name match.
-			KeyboardMacros macroSet;
-			if (this.mKeyboardProfiles.TryGetValue(keyPressEvent.DeviceName, out macroSet)) {
+			KeyboardProfile keyboardProfile;
+			if (this.mKeyboardProfiles.TryGetValue(keyPressEvent.DeviceName, out keyboardProfile)) {
 
-				// Check for a key and macro match.
-				KeyMacro macro;
-				if (macroSet.TryGetValue((VirtualKeys)keyPressEvent.VKey, out macro)) {
+				// Check for a key and macros match.
+				KeyMacroSet macroSet;
+				if (keyboardProfile.TryGetValue((VirtualKeys)keyPressEvent.VKey, out macroSet)) {
 
-					// Execute macro and return true.
-					macro.Execute();
-					return true;
+					// Check if a macro can be found based on key state.
+					KeyMacro macro;
+					if(macroSet.TryGetValue(keyPressEvent.KeyPressState, out macro)) {
+
+						// Execute macro and return true.
+						macro.Execute();
+						return true;
+					}
 				}
 			}
 

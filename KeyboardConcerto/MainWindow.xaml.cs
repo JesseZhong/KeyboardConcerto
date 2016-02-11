@@ -2,19 +2,17 @@
 // Authored by Jesse Z. Zhong
 #region Usings
 using System;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Diagnostics;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.ComponentModel;
 using System.Windows.Interop;
-using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using KeyboardConcerto.Theme;
 using KeyboardConcerto.RawInput;
+using System.Reflection;
 #endregion
 
 namespace KeyboardConcerto {
@@ -159,12 +157,12 @@ namespace KeyboardConcerto {
 				State = keyPressEvent.KeyPressState,
 				Allow = !this.mUserSettings.ProcessInput(keyPressEvent)
 			});
-			
+
 			// [TESTING] Prints out the user input's origin device's name.
-			this.DeviceNameBox.Text = keyPressEvent.DeviceName;
+			Debug.WriteLine(keyPressEvent.DeviceName);
 
 			// [TESTING] Prints out the state of the key.
-			this.KeyStateBox.Text = keyPressEvent.KeyPressState;
+			Debug.WriteLine(keyPressEvent.KeyPressState);
 		}
 
 		/// <summary>
@@ -303,6 +301,44 @@ namespace KeyboardConcerto {
 			// you may have more insight as to why the exception is being thrown.
 			Debug.WriteLine("Unhandled Exception: " + ex.Message);
 			Debug.WriteLine("Unhandled Exception: " + ex);
+		}
+		#endregion
+
+		#region Program Entry
+		[STAThreadAttribute]
+		public static void Main() {
+			var assemblies = new Dictionary<string, Assembly>();
+			var executingAssembly = Assembly.GetExecutingAssembly();
+			var resources = executingAssembly.GetManifestResourceNames().Where(n => n.EndsWith(".dll"));
+
+			foreach (string resource in resources) {
+				using (var stream = executingAssembly.GetManifestResourceStream(resource)) {
+					if (stream == null)
+						continue;
+
+					var bytes = new byte[stream.Length];
+					stream.Read(bytes, 0, bytes.Length);
+					try {
+						assemblies.Add(resource, Assembly.Load(bytes));
+					} catch (Exception ex) {
+						System.Diagnostics.Debug.Print(string.Format("Failed to load: {0}, Exception: {1}", resource, ex.Message));
+					}
+				}
+			}
+
+			AppDomain.CurrentDomain.AssemblyResolve += (s, e) => {
+				var assemblyName = new AssemblyName(e.Name);
+
+				var path = string.Format("{0}.dll", assemblyName.Name);
+
+				if (assemblies.ContainsKey(path)) {
+					return assemblies[path];
+				}
+
+				return null;
+			};
+
+			App.Main();
 		}
 		#endregion
 

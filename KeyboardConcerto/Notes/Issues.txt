@@ -18,3 +18,5 @@
        Fix: Logic error within the KeyMacro.Execute() method. When testing for whether or 
 	        not the execution sequence (mExecutionSequence) was assigned or not, the wrong
 			comparison operator was used (!= instead of ==); coding error.
+
+[Pending] Add support for modifiers such as CTRL, SHIFT, and ALT.

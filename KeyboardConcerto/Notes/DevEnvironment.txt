@@ -1,0 +1,7 @@
+﻿VS 2015 Community using Custom Install
+	Include Git
+	Include NuGet
+
+Install WPF-AutoGrid
+	In VS, Tools > NuGet Package Manager > Package Manager Console
+	CMD: PM> WPF Install-Package WpfAutoGrid

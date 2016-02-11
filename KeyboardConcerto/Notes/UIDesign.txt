@@ -1,0 +1,37 @@
+﻿[MainWindow]
+  "Macros" Button
+  "Settings" Button
+  "Run (CTRL + ESC)" Button
+
+
+[TrayIcon]
+
+[MacrosWindow]
+Need:
+  <Profile Editing>
+  Dropdown box for listing existing keyboard profiles.
+  List box for visually listing existing macros for a currently selected keyboard profile.
+
+  <Editing Options>
+  Tabs for selecting "Keys", "Commands", or "Timers"
+  Window displaying a selectable keyboard for keys. Also displays media and extended keys.
+  Window to list all available commands, such as start program, close program, etc.
+  Window to list types of timers.
+
+  <Keyboard Window>
+  Standard keyboard keys.
+  Shift/Caps keyboard keys.
+  Function keys (FN).
+  Media keys. (Play/Pause, Volume Up, Volume Down, Mute, Next Song, Previous Song, Default Media Player)
+  Extended keys. (My Computer (Explorer.exe), Calculator (Calc.exe), Default Mail)
+  Button to switch input styles between down (MAKE), up (BREAK), and press (MAKE & BREAK). Allows for button holding.
+
+  <File Loading>
+  "Load" Button to file dialog prompt the user to load an existing keyboard profile.
+
+  <File Saving>
+  "Save As.." Button to save the current keyboard profile 
+  "Save"
+
+  <Running and Stopping Macros>
+  "Run (CTRL + ESC)"/"Stop (CTRL + ESC)" Button to enable and disable the macros.

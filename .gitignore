@@ -2,6 +2,7 @@
 *.suo
 *.user
 *.sln.docstates
+*.vc.opendb
 wiki/
 
 # Build results

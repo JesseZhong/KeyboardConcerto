@@ -1,0 +1,16 @@
+﻿<Window
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:app="clr-namespace:KeyboardConcerto"
+    xmlns:local="clr-namespace:WpfAutoGrid"
+	x:Class="KeyboardConcerto.MacrosWindow"
+	x:Name="Window"
+	Title="Macros"
+    Style="{StaticResource OpticWindow}"
+	Width="640" Height="480">
+    
+    <local:AutoGrid x:Name="WindowContentArea" RowCount="1" RowHeight="*" Columns="100,*" Orientation="Horizontal" Margin="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <ListBox x:Name="listBox" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <app:OnScreenKeyboard VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+    </local:AutoGrid>
+</Window>

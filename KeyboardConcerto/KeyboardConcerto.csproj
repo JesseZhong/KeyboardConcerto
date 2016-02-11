@@ -39,7 +39,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>KeyboardConcerto.MainWindow</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -64,6 +64,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="InputSimulator">
       <HintPath>.\3rdParty\InputSimulator\InputSimulator.dll</HintPath>
@@ -77,6 +80,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -86,20 +90,23 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MacrosWindow\OnScreenKeyboard.xaml.cs">
+      <DependentUpon>OnScreenKeyboard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tests\UserSettingsTests.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tests\UserSettingsTests.cs" />
     <Compile Include="Theme\Win32Interop.cs" />
-    <Compile Include="Deque.cs" />
-    <Compile Include="MacrosWindow.xaml.cs">
+    <Compile Include="Keyboard\Containers\Deque.cs" />
+    <Compile Include="MacrosWindow\MacrosWindow.xaml.cs">
       <DependentUpon>MacrosWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="RawInput\DataStructures.cs" />
-    <Compile Include="Decision.cs" />
+    <Compile Include="Keyboard\Containers\Decision.cs" />
     <Compile Include="Keyboard\ExecutionSequence\ExecCommand.cs" />
     <Compile Include="Keyboard\ExecutionSequence\ExecNode.cs" />
     <Compile Include="Keyboard\ExecutionSequence\ExecTimer.cs" />
@@ -113,12 +120,14 @@
     <Compile Include="RawInput\KeyPressEvent.cs" />
     <Compile Include="RawInput\RawKeyboard.cs" />
     <Compile Include="RawInput\RegistryAccess.cs" />
-    <Compile Include="UserSettings.cs" />
+    <Compile Include="Keyboard\UserSettings.cs" />
     <Compile Include="RawInput\Win32.cs" />
     <Compile Include="Theme\DataStructures.cs" />
     <Compile Include="Theme\WindowTemplate.xaml.cs">
       <DependentUpon>WindowTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WpfAutoGrid\AutoGrid.cs" />
+    <Compile Include="WpfAutoGrid\DependencyExtensions.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -142,20 +151,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Notes\UIDesign.txt" />
     <Resource Include="Notes\Issues.txt" />
     <Resource Include="Theme\Images\CloseButtonHighlight.png" />
     <Resource Include="Theme\Images\MinimizeButton.png" />
     <Resource Include="Theme\Images\MinimizeButtonHighlight.png" />
     <Resource Include="Theme\Images\CloseButton.png" />
+    <Resource Include="Notes\DevEnvironment.txt" />
     <Content Include="Notes\LParamBreakdown.txt" />
     <Content Include="Notes\Items.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="MacrosWindow\OnScreenKeyboard.xaml">
       <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="MacrosWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MacrosWindow\MacrosWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -163,6 +174,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
     <Page Include="Theme\WindowTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -180,6 +195,13 @@
     </CreateItem>
     <Message Text="MERGING: @(IlmergeAssemblies->'%(Filename)')" Importance="High" />
     <Exec Command="&quot;$(SolutionDir)Tools\Ilmerge\Ilmerge.exe&quot; /targetplatform:&quot;v4,C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0&quot; /out:&quot;@(MainAssembly)&quot; &quot;@(IntermediateAssembly)&quot; @(IlmergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
+  </Target>
+  <Target Name="AfterResolveReferences">
+    <ItemGroup>
+      <EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll'">
+        <LogicalName>%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
   </Target>
   <Target Name="_CopyFilesMarkedCopyLocal" />
 </Project>

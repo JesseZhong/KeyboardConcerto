@@ -123,8 +123,8 @@
     <Compile Include="Keyboard\UserSettings.cs" />
     <Compile Include="RawInput\Win32.cs" />
     <Compile Include="Theme\DataStructures.cs" />
-    <Compile Include="Theme\WindowTemplate.xaml.cs">
-      <DependentUpon>WindowTemplate.xaml</DependentUpon>
+    <Compile Include="Theme\OpticTheme.xaml.cs">
+      <DependentUpon>OpticTheme.xaml</DependentUpon>
     </Compile>
     <Compile Include="WpfAutoGrid\AutoGrid.cs" />
     <Compile Include="WpfAutoGrid\DependencyExtensions.cs" />
@@ -178,7 +178,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Theme\WindowTemplate.xaml">
+    <Page Include="Theme\OpticTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

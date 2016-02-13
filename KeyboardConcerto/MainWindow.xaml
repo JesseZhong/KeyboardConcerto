@@ -5,7 +5,8 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		x:Class="KeyboardConcerto.MainWindow" Title="Concerto"
-		Width="120" Height="320" Style="{StaticResource OpticWindow}">
+        Style="{DynamicResource OpticWindow}"
+		Width="120" Height="320">
     <Window.Resources>
         <sys:Double x:Key="ButtonHeight">80</sys:Double>
     </Window.Resources>

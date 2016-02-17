@@ -26,10 +26,17 @@ namespace KeyboardConcerto.Tests {
 			us.AddEntry(@"\\?\ACPI#PNP0303#4&16cfe3e0&0#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}", RawInput.VirtualKeys.A, "MAKE", execSeq);
 
 			// For Logitech K200 Keyboard. '1' key triggers macro sequence.
-			us.AddEntry(@"\\?\HID#VID_046D&PID_C31D&MI_00#9&38b6029d&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}", RawInput.VirtualKeys.D1, "MAKE", execSeq);
+			LinkedList<ExecNode> execSeq0 = new LinkedList<ExecNode>();
+			execSeq0.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.MEDIA_PREV_TRACK, ExecVKey.EState.Press));
+			us.AddEntry(@"\\?\HID#VID_046D&PID_C31D&MI_00#9&38b6029d&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}", RawInput.VirtualKeys.D1, "MAKE", execSeq0);
+
+			// For Logitech K200 Keyboard. '2' key triggers macro sequence.
+			LinkedList<ExecNode> execSeq1 = new LinkedList<ExecNode>();
+			execSeq1.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.MEDIA_NEXT_TRACK, ExecVKey.EState.Press));
+			us.AddEntry(@"\\?\HID#VID_046D&PID_C31D&MI_00#9&38b6029d&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}", RawInput.VirtualKeys.D2, "MAKE", execSeq1);
 
 			// For Ducky Shine II. '2' key triggers macro sequence.
-			us.AddEntry(@"\\?\HID#VID_04D9&PID_0183&MI_00#8&6d34b6b&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}", RawInput.VirtualKeys.D2, "MAKE", execSeq);
+			us.AddEntry(@"\\?\HID#VID_04D9&PID_0183&MI_00#8&6d34b6b&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}", RawInput.VirtualKeys.D3, "MAKE", execSeq);
 
 			return us;
 		}

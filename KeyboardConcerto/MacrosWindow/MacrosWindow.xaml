@@ -7,7 +7,7 @@
 	x:Name="Window"
 	Title="Macros"
     Style="{DynamicResource OpticWindow}"
-	Width="640" Height="480">
+	Width="840" Height="480">
 
     <local:AutoGrid x:Name="WindowContentArea" RowCount="2" RowHeight="*" Columns="100,*" Orientation="Horizontal" Margin="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <ListBox x:Name="listBox" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>

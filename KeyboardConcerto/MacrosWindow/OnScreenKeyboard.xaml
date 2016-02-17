@@ -16,6 +16,11 @@
         <sys:Double x:Key="BigKeyFontSize">8</sys:Double>
         <sys:Double x:Key="BigTextKeyFontSize">6</sys:Double>
 		<FontFamily x:Key="KeyFontFamily">Consolas</FontFamily>
+		
+		<!-- Keyboard -->
+		<Thickness x:Key="KBVerticalSpacer">0,6,0,0</Thickness>
+		<Thickness x:Key="KBHorizontalSpacer">6,0,0,0</Thickness>
+		<Thickness x:Key="KBHoriVertSpacer">6,6,0,0</Thickness>
 
 		<!-- First Row -->
         <sys:Double x:Key="BackspaceWidth">46</sys:Double>
@@ -69,19 +74,22 @@
         </local:AutoGrid>
 
         <!-- Print Screen, Scroll, & Pause -->
-        <local:AutoGrid RowCount="2" ColumnCount="3" RowHeight="Auto" ColumnWidth="Auto">
+        <local:AutoGrid RowCount="2" ColumnCount="3" RowHeight="Auto" ColumnWidth="Auto" Margin="{DynamicResource KBHorizontalSpacer}">
             <Button x:Name="KeyPrtScrn" Content="PrtSc" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigTextKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
             <Button x:Name="KeyScroll" Content="Scroll" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigTextKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
             <Button x:Name="KeyPause" Content="Pause" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigTextKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
         </local:AutoGrid>
 
-        <!-- Spacer -->
-        <local:AutoGrid RowCount="2" ColumnCount="2" RowHeight="Auto" ColumnWidth="Auto">
+        <!-- Application Shortcuts -->
+		<local:AutoGrid RowCount="2" ColumnCount="4" RowHeight="Auto" ColumnWidth="Auto" Margin="{DynamicResource KBHorizontalSpacer}">
+			<Button x:Name="KeyCalculator" Content="&#128425;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyPC" Content="&#128187;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyMail" Content="&#9993;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyHomePage" Content="&#8962;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+		</local:AutoGrid>
 
-        </local:AutoGrid>
-
-        <!-- Standard Keyboard -->
-        <local:AutoGrid RowCount="5" ColumnCount="2" Orientation="Vertical" RowHeight="Auto" ColumnWidth="Auto">
+		<!-- Standard Keyboard -->
+		<local:AutoGrid RowCount="5" ColumnCount="2" Orientation="Vertical" RowHeight="Auto" ColumnWidth="Auto" Margin="{DynamicResource KBVerticalSpacer}">
 
             <!-- First Row (Numbers) -->
             <local:AutoGrid RowCount="2" ColumnCount="14" RowHeight="Auto" ColumnWidth="Auto">
@@ -96,7 +104,7 @@
                 <Button x:Name="Key8" Content="8" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
                 <Button x:Name="Key9" Content="9" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
                 <Button x:Name="Key0" Content="0" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
-                <Button x:Name="KeyMinus" Content="-" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+                <Button x:Name="KeyHyphen" Content="-" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
                 <Button x:Name="KeyEquals" Content="=" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
                 <Button x:Name="KeyBackspace" Content="Backspace" Width="{DynamicResource BackspaceWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
             </local:AutoGrid>
@@ -165,7 +173,43 @@
             </local:AutoGrid>
         </local:AutoGrid>
 
-        <!-- Numpad + Side Keys -->
+		<!-- Navigation -->
+		<local:AutoGrid RowCount="6" ColumnCount="3" RowHeight="Auto" ColumnWidth="Auto" Margin="{DynamicResource KBHoriVertSpacer}">
+			<Button x:Name="KeyInsert" Content="Ins" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyHome" Content="Home" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyPageUp" Content="PgUp" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyDelete" Content="Del" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyEnd" Content="End" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyPageDown" Content="PgDn" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Grid local:AutoGrid.ColumnSpan="3" Height="{DynamicResource KeyHeight}"/>
+			<Grid/>
+			<Button x:Name="KeyUp" Content="&#9650;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Grid/>
+			<Button x:Name="KeyLeft" Content="&#9664;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyDown" Content="&#9660;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyRight" Content="&#9654;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+		</local:AutoGrid>
+
+        <!-- Numpad -->
+		<local:AutoGrid RowCount="6" ColumnCount="4" RowHeight="Auto" ColumnWidth="Auto" Margin="{DynamicResource KBHoriVertSpacer}">
+			<Button x:Name="KeyNumLock" Content="NumLk" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigTextKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyDivide" Content="/" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyMultiply" Content="*" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyMinus" Content="-" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum7" Content="7" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum8" Content="8" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum9" Content="9" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyPlus" Content="+" local:AutoGrid.RowSpan="2" Width="{DynamicResource KeyWidth}" Height="Auto" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum4" Content="4" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum5" Content="5" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum6" Content="6" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum1" Content="1" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum2" Content="2" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum3" Content="3" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyReturn" Content="&#9166;" local:AutoGrid.RowSpan="2" Width="{DynamicResource KeyWidth}" Height="Auto" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNum0" Content="0" local:AutoGrid.ColumnSpan="2" Width="Auto" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+			<Button x:Name="KeyNumDecimal" Content="." Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}"/>
+		</local:AutoGrid>
         
         <!-- Media Keys -->
         

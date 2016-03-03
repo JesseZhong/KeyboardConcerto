@@ -20,3 +20,11 @@
 			comparison operator was used (!= instead of ==); coding error.
 
 [Pending] Add support for modifiers such as CTRL, SHIFT, and ALT.
+
+[Pending] Certain application launching keys do not work when set as macros.
+       Issue: Although these keys are procured at the OS level, they do nothing. As I suspected
+	          they require their own set of arguments to work. These, as it turns out, are set
+			  in the registry and checked for whenever the keys are invoked. My guess is that
+			  they are written when the drivers are installed. More information found in an
+			  inclosed PDF on remapping USB keypads and this article:
+			  http://www.experts-exchange.com/articles/2155/Keyboard-Remapping-CAPSLOCK-to-Ctrl-and-Beyond.html

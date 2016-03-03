@@ -158,11 +158,11 @@ namespace KeyboardConcerto {
 				Allow = !this.mUserSettings.ProcessInput(keyPressEvent)
 			});
 
-			// [TESTING] Prints out the user input's origin device's name.
-			Debug.WriteLine(keyPressEvent.DeviceName);
-
-			// [TESTING] Prints out the state of the key.
-			Debug.WriteLine(keyPressEvent.KeyPressState);
+			// [TESTING] Prints out the user input's origin device's name, virtual key code, and key state.
+			Debug.WriteLine("Input Event\nDevice ID: {0}\nVKey: {1}, State: {2}\n", 
+				keyPressEvent.DeviceName,
+				keyPressEvent.VKeyName,
+				keyPressEvent.KeyPressState);
 		}
 
 		/// <summary>

@@ -68,6 +68,10 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FontAwesome.WPF, Version=4.5.0.32401, Culture=neutral, PublicKeyToken=0758b07a11a4f466, processorArchitecture=MSIL">
+      <HintPath>..\packages\FontAwesome.WPF.4.5.0.7\lib\net40\FontAwesome.WPF.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="InputSimulator">
       <HintPath>.\3rdParty\InputSimulator\InputSimulator.dll</HintPath>
       <IlMerge>True</IlMerge>
@@ -137,6 +141,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Resource Include="Font\fontawesome-webfont.ttf" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

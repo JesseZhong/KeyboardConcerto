@@ -21,10 +21,19 @@
 
 [Pending] Add support for modifiers such as CTRL, SHIFT, and ALT.
 
-[Pending] Certain application launching keys do not work when set as macros.
+[Hold] Certain application launching keys do not work when set as macros.
        Issue: Although these keys are procured at the OS level, they do nothing. As I suspected
 	          they require their own set of arguments to work. These, as it turns out, are set
 			  in the registry and checked for whenever the keys are invoked. My guess is that
 			  they are written when the drivers are installed. More information found in an
 			  inclosed PDF on remapping USB keypads and this article:
 			  http://www.experts-exchange.com/articles/2155/Keyboard-Remapping-CAPSLOCK-to-Ctrl-and-Beyond.html
+
+			  After further investigation and testing, it seems that a RI_KEY_E0 (value = 2; usually 
+			  means left version of key) is in charge of cuing the OS into looking into the registry
+			  for the exact value associated with the virtual key code. The list of the associated
+			  AppKey codes can be found in the link above. InputSimulator has no way of simulating
+			  the flags. Therefore this issue is placed on hold, in favor of a better solution (via
+			  command executions).
+
+			  This issue can be revisited later on.

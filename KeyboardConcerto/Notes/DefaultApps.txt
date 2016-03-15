@@ -1,0 +1,25 @@
+﻿Default Apps
+
+Description:
+	Within Windows 10, the provided Settings app allows users to easily select default apps
+	for the most standard app types: 
+					Email, Maps, Music Player, Photo Viewer, Video Player, and Web Browser
+
+	These associations are presented clearly in the Settings app, located in SYSTEM > Default apps.
+	However, the underlying workings are less elegant. This UI still uses the existing file type
+	association system. Just like certain AppKeys (see Issues.txt), the app relies on the default
+	app associated with a specific file types or protocols.
+
+	Here is the mapping of app categories:
+
+	Email			MAILTO
+
+	Maps			BINGMAPS
+
+	Music Player	*.mp3
+
+	Photo Viewer	*.jpeg, *.jpg, *.png
+
+	Video Player	*.avi, *.mp4
+
+	Web Browser		*.htm, *.html

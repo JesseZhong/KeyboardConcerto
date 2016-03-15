@@ -139,6 +139,7 @@ namespace KeyboardConcerto.RawInput {
 			keyPressEvent.Message = _rawBuffer.data.keyboard.Message;
 			keyPressEvent.VKeyName = KeyMapper.GetKeyName(VirtualKeyCorrection(virtualKey, isE0BitSet, makeCode)).ToUpper();
 			keyPressEvent.VKey = virtualKey;
+			keyPressEvent.Flags = flags;
 
 			if (KeyPressed != null) {
 				KeyPressed(this, new InputEventArg(keyPressEvent));

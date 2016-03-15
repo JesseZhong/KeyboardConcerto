@@ -159,10 +159,11 @@ namespace KeyboardConcerto {
 			});
 
 			// [TESTING] Prints out the user input's origin device's name, virtual key code, and key state.
-			Debug.WriteLine("Input Event\nDevice ID: {0}\nVKey: {1}, State: {2}\n", 
+			Debug.WriteLine("Input Event\n  Device ID: {0}\n  VKey: {1}\n  State: {2}\n  Flags: {3}\n", 
 				keyPressEvent.DeviceName,
 				keyPressEvent.VKeyName,
-				keyPressEvent.KeyPressState);
+				keyPressEvent.KeyPressState,
+				keyPressEvent.Flags);
 		}
 
 		/// <summary>

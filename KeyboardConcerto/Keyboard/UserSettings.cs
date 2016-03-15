@@ -206,7 +206,7 @@ namespace KeyboardConcerto {
 					if(macroSet.TryGetValue(keyPressEvent.KeyPressState, out macro)) {
 
 						// Execute macro and return true.
-						macro.Execute();
+						System.Diagnostics.Debug.WriteLine("Macro execution {0}.", (macro.Execute() ? "success" : "failed"));
 						return true;
 					}
 				}

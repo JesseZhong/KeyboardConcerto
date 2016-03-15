@@ -11,6 +11,7 @@ namespace KeyboardConcerto.RawInput {
 		public string VKeyName;         // Virtual Key Name. Corrected for L/R keys(i.e. LSHIFT/RSHIFT) and Zoom
 		public uint Message;            // WM_KEYDOWN or WM_KEYUP        
 		public string KeyPressState;    // MAKE or BREAK
+		public int Flags;               // One or more of RI_KEY_MAKE, RI_KEY_BREAK, RI_KEY_E0, RI_KEY_E1
 
 		public string Source {
 			get { return _source; }

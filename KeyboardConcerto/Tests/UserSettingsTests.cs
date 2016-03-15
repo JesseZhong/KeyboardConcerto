@@ -19,13 +19,15 @@ namespace KeyboardConcerto.Tests {
 			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_S, ExecVKey.EState.Press));
 			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_T, ExecVKey.EState.Press));
 
-			const string logitechKeyboardName = @"\\?\HID#VID_046D&PID_C31D&MI_00#8&2b3d0f7b&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
+			const string logitechKeyboardName = @"\\?\HID#VID_046D&PID_C31D&MI_00#8&133de0dc&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
+			const string asusKeyboardName = @"\\?\ACPI#PNP0303#4&16cfe3e0&0#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
+			const string duckyKeyboardName = @"\\?\HID#VID_04D9&PID_0183&MI_00#8&392462f2&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
 
 			// [Control] Fake keyboard input to function as the test control.
 			us.AddEntry(@"Fake Keyboard", RawInput.VirtualKeys.S, "MAKE", execSeq);
 
 			// For ASUS laptop's keyboard. 'A' key triggers macro sequence.
-			us.AddEntry(@"\\?\ACPI#PNP0303#4&16cfe3e0&0#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}", RawInput.VirtualKeys.A, "MAKE", execSeq);
+			us.AddEntry(asusKeyboardName, RawInput.VirtualKeys.A, "MAKE", execSeq);
 
 			// For Logitech K200 Keyboard. '4' key triggers "first" to be typed.
 			us.AddEntry(logitechKeyboardName, RawInput.VirtualKeys.D4, "MAKE", execSeq);
@@ -47,11 +49,11 @@ namespace KeyboardConcerto.Tests {
 
 			// For Logitech K200 Keyboard. '5' key triggers 'Launch Media'.
 			LinkedList<ExecNode> execSeq3 = new LinkedList<ExecNode>();
-			execSeq3.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.LAUNCH_APP1, ExecVKey.EState.Press));
+			execSeq3.AddFirst(new ExecCommand(Command.APP_LAUNCH, "*.mp3"));
 			us.AddEntry(logitechKeyboardName, RawInput.VirtualKeys.D5, "MAKE", execSeq3);
 
 			// For Ducky Shine II. '2' key triggers "first" to be typed.
-			us.AddEntry(@"\\?\HID#VID_04D9&PID_0183&MI_00#8&6d34b6b&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}", RawInput.VirtualKeys.D3, "MAKE", execSeq);
+			us.AddEntry(duckyKeyboardName, RawInput.VirtualKeys.D3, "MAKE", execSeq);
 
 			return us;
 		}

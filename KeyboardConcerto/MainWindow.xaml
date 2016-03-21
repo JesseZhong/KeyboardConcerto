@@ -8,10 +8,10 @@
         Style="{DynamicResource OpticWindow}"
 		Width="120" Height="320">
     <Window.Resources>
-        <sys:Double x:Key="ButtonHeight">80</sys:Double>
+        <sys:Double x:Key="ButtonHeight">64</sys:Double>
     </Window.Resources>
         
-    <Grid x:Name="WindowContentArea" Margin="4">
+    <Grid x:Name="WindowContentArea" Margin="-1,4,-1,4">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>

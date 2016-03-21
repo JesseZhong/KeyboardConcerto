@@ -279,7 +279,7 @@ namespace KeyboardConcerto {
 			if (!this.mMacrosWindow.IsVisible)
 				this.mMacrosWindow.Show();
 			else
-				this.mMacrosWindow.Activate();
+				this.mMacrosWindow.Hide();
 		}
 
 		/// <summary>

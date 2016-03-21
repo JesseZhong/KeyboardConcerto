@@ -5,9 +5,9 @@
 	<!-- Resource dictionary entries should be defined here. -->
 
 	<!-- Window Properties -->
-    <LinearGradientBrush x:Key="WindowBackground" EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
-        <GradientStop Color="#FF9B59B6" Offset="0.988"/>
-        <GradientStop Color="#FF3498DB" Offset="0.288"/>
+    <LinearGradientBrush x:Key="WindowBackground" Opacity="100.0" EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+		<GradientStop Color="#FF090909" Offset="0.988"/>
+		<GradientStop Color="#FF252526" Offset="0.288"/>
         </LinearGradientBrush>
     <SolidColorBrush x:Key="WindowBorderBrush" Color="#55000000" />
     <SolidColorBrush x:Key="TopBarBackground" Color="#FF141414" />

@@ -52,7 +52,12 @@ namespace KeyboardConcerto.Tests {
 			execSeq3.AddFirst(new ExecCommand(Command.APP_LAUNCH, "C:/Program Files/iTunes/iTunes.exe"));
 			us.AddEntry(logitechKeyboardName, RawInput.VirtualKeys.D5, "MAKE", execSeq3);
 
-			// For Ducky Shine II. '2' key triggers "first" to be typed.
+			// For Logitech K200 Keyboard. '6' key triggers 'Launch Media'.
+			LinkedList<ExecNode> execSeq4 = new LinkedList<ExecNode>();
+			execSeq4.AddFirst(new ExecCommand(Command.HTTPS_LAUNCH, "www.reddit.com"));
+			us.AddEntry(logitechKeyboardName, RawInput.VirtualKeys.D6, "MAKE", execSeq4);
+
+			// For Ducky Shine II. '3' key triggers "first" to be typed.
 			us.AddEntry(duckyKeyboardName, RawInput.VirtualKeys.D3, "MAKE", execSeq);
 
 			return us;

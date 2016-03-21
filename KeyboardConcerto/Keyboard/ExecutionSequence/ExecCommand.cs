@@ -1,6 +1,7 @@
 ﻿// ExecCommand.cs
 // Authored by Jesse Z. Zhong
 #region Usings
+using System;
 using System.IO;
 using System.Diagnostics;
 #endregion
@@ -56,7 +57,7 @@ namespace KeyboardConcerto {
 					return "No action. Please choose an actual command.";
 
 				case Command.APP_LAUNCH:
-					return "Launches an app, program, or process of your choosing.\n" +
+					return "Launches an app, program, protocol, or process of your choosing.\n" +
 						   "You may include arguments/options with your execution.";
 
 				case Command.HTTP_LAUNCH:
@@ -122,11 +123,11 @@ namespace KeyboardConcerto {
 
 		#region Constructor
 		/// <summary>
-		/// 
+		/// Initializes an automated command given the type, target, and options.
 		/// </summary>
-		/// <param name="command"></param>
-		/// <param name="target"></param>
-		/// <param name="options"></param>
+		/// <param name="command">The type of command that is being used.</param>
+		/// <param name="target">The target details of the command.</param>
+		/// <param name="options">Any optional options that are specified for the command.</param>
 		public ExecCommand(Command command, string target = "", string options = "") {
 			this.mCommand = command;
 			this.mTarget = target;
@@ -141,6 +142,8 @@ namespace KeyboardConcerto {
 		public override bool Execute() {
 
 			switch (this.mCommand) {
+
+				// UNSPECIFIED COMMAND; DOES NOTHING
 				case Command.NONE:
 					return false;
 
@@ -154,6 +157,28 @@ namespace KeyboardConcerto {
 					// Attempt to run the process with the filename and arguments.
 					// Return true if a process is initialized; false otherwise.
 					return (Process.Start(this.mTarget, this.mOptions) != null);
+
+				// LAUNCHES A WEBSITE
+				case Command.HTTP_LAUNCH:
+
+					// Checks if a URL was specified.
+					if (this.mTarget == "")
+						return false;
+
+					// Attempt to load a web page.
+					// Return true if the page is launched; false otherwise.
+					return (Process.Start(String.Format("http:{0}", this.mTarget), this.mOptions) != null);
+
+				// SECURELY LAUNCHES A WEBSITE
+				case Command.HTTPS_LAUNCH:
+
+					// Checks if a URL was specified.
+					if (this.mTarget == "")
+						return false;
+
+					// Attempt to load a web page securely.
+					// Return true if the page is launched; false otherwise.
+					return (Process.Start(String.Format("https:{0}", this.mTarget), this.mOptions) != null);
 
 				default:
 					return false;

@@ -66,9 +66,9 @@ namespace KeyboardConcerto {
 		}
 
 		/// <summary>
-		/// 
+		/// Initializes glass effect onto the window.
 		/// </summary>
-		/// <param name="hwnd"></param>
+		/// <param name="hwnd">The window's handle.</param>
 		private void InitializeGlass(IntPtr hWnd) {
 			if (!Win32Interop.DwmIsCompositionEnabled())
 				return;
@@ -136,12 +136,16 @@ namespace KeyboardConcerto {
 		}
 
 		/// <summary>
-		/// 
+		/// Initialize the macros window without displaying it.
 		/// </summary>
 		protected void InitializeMacrosWindow() {
+
+			// Instantiate the window.
 			this.mMacrosWindow = new MacrosWindow();
 			this.mMacrosWindow.InitializeComponent();
-			this.mMacrosWindow.Hide();
+
+			// Load the window without showing it. (Register handle without showing)
+			new WindowInteropHelper(this.mMacrosWindow).EnsureHandle();
 		}
 		#endregion
 
@@ -270,12 +274,17 @@ namespace KeyboardConcerto {
 
 		#region Button Event Handling
 		/// <summary>
-		/// 
+		/// Toggle the visibility of the macros window when the macros button is clicked.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
+		/// <param name="sender">This window.</param>
+		/// <param name="e">Event arguments.</param>
 		private void OnMacrosButton_Click(object sender, System.Windows.RoutedEventArgs e) {
-			// TODO: Add event handler implementation here.
+
+			// Check if the window exists.
+			if ((new WindowInteropHelper(this.mMacrosWindow).Handle == IntPtr.Zero) || (this.mMacrosWindow == null))
+				return;
+
+			// Toggle the visibility of the window.
 			if (!this.mMacrosWindow.IsVisible)
 				this.mMacrosWindow.Show();
 			else

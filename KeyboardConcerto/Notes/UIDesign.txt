@@ -1,4 +1,7 @@
-﻿[MainWindow]
+﻿IMPORTANT: Ensure that ESC (Escape) is unbindable.
+		   Reserve keys turning macros on and off.
+
+[MainWindow]
   "Macros" Button
   "Settings" Button
   "Run (CTRL + ESC)" Button
@@ -25,7 +28,7 @@ Need:
   Media keys. (Play/Pause, Volume Up, Volume Down, Mute, Next Song, Previous Song, Default Media Player)
   Extended keys. (My Computer (Explorer.exe), Calculator (Calc.exe), Default Mail)
   Button to switch input styles between down (MAKE), up (BREAK), and press (MAKE & BREAK). Allows for button holding.
-  Non-Standard Keys: Sleep, Select, Execute, Help, Apps, IME PROCESS, Packet, Attn, CrSel, ExSel, Erase EOF, Play, Zoom, PA1, Clear
+  Non-Standard Keys: F13-24 keys, Sleep, Print, Select, Execute, Help, Apps, IME PROCESS, Packet, Attn, CrSel, ExSel, Erase EOF, Play, Zoom, PA1, Clear
 
   <File Loading>
   "Load" Button to file dialog prompt the user to load an existing keyboard profile.

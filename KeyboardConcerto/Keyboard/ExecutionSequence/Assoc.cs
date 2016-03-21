@@ -242,7 +242,7 @@ namespace KeyboardConcerto {
 		MAX
 	}
 
-	public static class Win32 {
+	public static class Assoc {
 
 		/// <summary>
 		/// 

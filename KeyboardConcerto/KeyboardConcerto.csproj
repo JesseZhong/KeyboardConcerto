@@ -94,7 +94,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Keyboard\ExecutionSequence\Win32.cs" />
+    <Compile Include="Keyboard\ExecutionSequence\Assoc.cs" />
     <Compile Include="MacrosWindow\OnScreenKeyboard.xaml.cs">
       <DependentUpon>OnScreenKeyboard.xaml</DependentUpon>
     </Compile>

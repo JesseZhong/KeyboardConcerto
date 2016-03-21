@@ -1,6 +1,7 @@
 ﻿// ExecCommand.cs
 // Authored by Jesse Z. Zhong
 #region Usings
+using System.IO;
 using System.Diagnostics;
 #endregion
 
@@ -29,8 +30,16 @@ namespace KeyboardConcerto {
 			switch (command) {
 				case Command.NONE:
 					return "None";
+
 				case Command.APP_LAUNCH:
-					return "Launch Application";
+					return "Launch an Application";
+
+				case Command.HTTP_LAUNCH:
+					return "Open a Web Page";
+
+				case Command.HTTPS_LAUNCH:
+					return "Securely Open a Web Page";
+
 				default:
 					return "";
 			}
@@ -49,6 +58,13 @@ namespace KeyboardConcerto {
 				case Command.APP_LAUNCH:
 					return "Launches an app, program, or process of your choosing.\n" +
 						   "You may include arguments/options with your execution.";
+
+				case Command.HTTP_LAUNCH:
+					return "Launches a web page in your default browser.";
+
+				case Command.HTTPS_LAUNCH:
+					return "Launches a web page securely in your default browser.";
+
 				default:
 					return "";
 			}
@@ -61,13 +77,14 @@ namespace KeyboardConcerto {
 	public class ExecCommand : ExecNode {
 
 		#region Members
-		private Command mCommand;
-		private string mOptions;
+		private Command mCommand = Command.NONE;
+		private string mTarget = "";
+		private string mOptions = "";
 		#endregion
 
 		#region Properties
 		/// <summary>
-		/// Command that needs to be run.
+		/// Gets or sets the command that needs to be run.
 		/// </summary>
 		public Command Command {
 			get {
@@ -79,7 +96,19 @@ namespace KeyboardConcerto {
 		}
 
 		/// <summary>
-		/// Stores the user defined options associated with this command.
+		/// Gets or sets the target of this command.
+		/// </summary>
+		public string Target {
+			get {
+				return this.mTarget;
+			}
+			set {
+				this.mTarget = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the user-defined options for this command.
 		/// </summary>
 		public string Options {
 			get {
@@ -96,9 +125,11 @@ namespace KeyboardConcerto {
 		/// 
 		/// </summary>
 		/// <param name="command"></param>
+		/// <param name="target"></param>
 		/// <param name="options"></param>
-		public ExecCommand(Command command, string options) {
+		public ExecCommand(Command command, string target = "", string options = "") {
 			this.mCommand = command;
+			this.mTarget = target;
 			this.mOptions = options;
 		}
 		#endregion
@@ -116,18 +147,13 @@ namespace KeyboardConcerto {
 				// LAUNCHES AN APPLICATION.
 				case Command.APP_LAUNCH:
 
-					// Separate the file name from the arguments.
-					// null: use white spaces as delimiters, 2: limit to 2 substrings (filename and arguments), 
-					// RemoveEmptyEntries: do not include empty strings.
-					string[] options = this.mOptions.Split(null as char[], 2, System.StringSplitOptions.RemoveEmptyEntries);
-
-					// Check if there are any substrings; return false if there is no file to run.
-					if (options.Length == 0)
+					// Checks if an application path was specified and that it exists.
+					if (!File.Exists(this.mTarget))
 						return false;
 
 					// Attempt to run the process with the filename and arguments.
 					// Return true if a process is initialized; false otherwise.
-					return (Process.Start(options[0], ((options.Length > 1) ? options[1] : null)) != null);
+					return (Process.Start(this.mTarget, this.mOptions) != null);
 
 				default:
 					return false;

@@ -20,11 +20,14 @@
 		<sys:Double x:Key="KeyHeight">24</sys:Double>
 		<sys:Double x:Key="SpecialKeyWidth">35</sys:Double>
 		<sys:Double x:Key="SpecialKeyHeight">20</sys:Double>
+		<sys:Double x:Key="DualKeyAreaHeight">20</sys:Double>
 
 		<!-- Key Text Sizes -->
 		<sys:Double x:Key="KeyFontSize">12</sys:Double>
 		<sys:Double x:Key="BigKeyFontSize">8</sys:Double>
 		<sys:Double x:Key="BigTextKeyFontSize">6</sys:Double>
+		<sys:Double x:Key="DualKeyFontSize1">11</sys:Double>
+		<sys:Double x:Key="DualKeyFontSize2">10</sys:Double>
 
 		<!-- Default Font Family -->
 		<FontFamily x:Key="KeyFontFamily">Consolas</FontFamily>
@@ -36,6 +39,7 @@
 		<Thickness x:Key="KBVerticalSpacer">0,6,0,0</Thickness>
 		<Thickness x:Key="KBHorizontalSpacer">6,0,0,0</Thickness>
 		<Thickness x:Key="KBHoriVertSpacer">6,6,0,0</Thickness>
+		<Thickness x:Key="DualKeySpacer">3,0</Thickness>
 
 		<!-- Key Specific Attributes -->
 		<!-- First Row -->
@@ -138,19 +142,84 @@
 
 				<!-- First Row (Numbers) -->
 				<local:AutoGrid RowCount="2" ColumnCount="14" RowHeight="Auto" ColumnWidth="Auto">
-					<Button x:Name="KeyGrave" Content="`" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyGrave_Click" Focusable="False"/>
-					<Button x:Name="Key1" Content="1" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key1_Click" Focusable="False"/>
-					<Button x:Name="Key2" Content="2" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key2_Click" Focusable="False"/>
-					<Button x:Name="Key3" Content="3" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key3_Click" Focusable="False"/>
-					<Button x:Name="Key4" Content="4" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key4_Click" Focusable="False"/>
-					<Button x:Name="Key5" Content="5" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key5_Click" Focusable="False"/>
-					<Button x:Name="Key6" Content="6" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key6_Click" Focusable="False"/>
-					<Button x:Name="Key7" Content="7" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key7_Click" Focusable="False"/>
-					<Button x:Name="Key8" Content="8" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key8_Click" Focusable="False"/>
-					<Button x:Name="Key9" Content="9" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key9_Click" Focusable="False"/>
-					<Button x:Name="Key0" Content="0" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="Key0_Click" Focusable="False"/>
-					<Button x:Name="KeyHyphen" Content="-" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyHyphen_Click" Focusable="False"/>
-					<Button x:Name="KeyEquals" Content="=" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyEquals_Click" Focusable="False"/>
+					<Button x:Name="KeyGrave" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeyGrave_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">`</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">~</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key1" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key1_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">1</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">!</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key2" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key2_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">2</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">@</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key3" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key3_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">3</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">#</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key4" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key4_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">4</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">$</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key5" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key5_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">5</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">%</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key6" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key6_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">6</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">^</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key7" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key7_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">7</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">&#x0026;</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key8" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key8_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">8</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">*</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key9" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key9_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">9</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">(</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="Key0" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="Key0_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">0</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">)</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="KeyHyphen" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeyHyphen_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">-</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">_</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="KeyEquals" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeyEquals_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">=</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">+</TextBlock>
+						</DockPanel>
+					</Button>
 					<Button x:Name="KeyBackspace" Content="Backspace" Width="{DynamicResource BackspaceWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyBackspace_Click" Focusable="False"/>
 				</local:AutoGrid>
 
@@ -167,9 +236,24 @@
 					<Button x:Name="KeyI" Content="I" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyI_Click" Focusable="False"/>
 					<Button x:Name="KeyO" Content="O" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyO_Click" Focusable="False"/>
 					<Button x:Name="KeyP" Content="P" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyP_Click" Focusable="False"/>
-					<Button x:Name="KeyRBracket" Content="[" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyRBracket_Click" Focusable="False"/>
-					<Button x:Name="KeyLBracket" Content="]" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyLBracketClick" Focusable="False"/>
-					<Button x:Name="KeyBackSlash" Content="\" Width="{DynamicResource BackSlashWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyBackSlash_Click" Focusable="False"/>
+					<Button x:Name="KeyRBracket" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeyRBracket_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">[</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">{</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="KeyLBracket" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeyLBracketClick" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">]</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">}</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="KeyBackSlash" Width="{DynamicResource BackSlashWidth}" Height="{DynamicResource KeyHeight}" Click="KeyBackSlash_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">\</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">|</TextBlock>
+						</DockPanel>
+					</Button>
 				</local:AutoGrid>
 
 				<!-- Third Row (Caps, ASDFG) -->
@@ -184,8 +268,18 @@
 					<Button x:Name="KeyJ" Content="J" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyJ_Click" Focusable="False"/>
 					<Button x:Name="KeyK" Content="K" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyK_Click" Focusable="False"/>
 					<Button x:Name="KeyL" Content="L" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyL_Click" Focusable="False"/>
-					<Button x:Name="KeySemiColon" Content=";" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeySemiColon_Click" Focusable="False"/>
-					<Button x:Name="KeyQuote" Content="'" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyQuote_Click" Focusable="False"/>
+					<Button x:Name="KeySemiColon" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeySemiColon_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">;</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">:</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="KeyQuote" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeyQuote_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">'</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">"</TextBlock>
+						</DockPanel>
+					</Button>
 					<Button x:Name="KeyEnter" Content="Enter" Width="{DynamicResource EnterWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyEnter_Click" Focusable="False"/>
 				</local:AutoGrid>
 
@@ -199,9 +293,24 @@
 					<Button x:Name="KeyB" Content="B" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyB_Click" Focusable="False"/>
 					<Button x:Name="KeyN" Content="N" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyN_Click" Focusable="False"/>
 					<Button x:Name="KeyM" Content="M" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyM_Click" Focusable="False"/>
-					<Button x:Name="KeyComma" Content="," Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyComma_Click" Focusable="False"/>
-					<Button x:Name="KeyPeriod" Content="." Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyPeriod_Click" Focusable="False"/>
-					<Button x:Name="KeySlash" Content="/" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeySlash_Click" Focusable="False"/>
+					<Button x:Name="KeyComma" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeyComma_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">,</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">&#x3c;</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="KeyPeriod" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeyPeriod_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">.</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">&#x3e;</TextBlock>
+						</DockPanel>
+					</Button>
+					<Button x:Name="KeySlash" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" Click="KeySlash_Click" Focusable="False">
+						<DockPanel VerticalAlignment="Center" Height="{DynamicResource DualKeyAreaHeight}">
+							<TextBlock VerticalAlignment="Center" FontSize="{DynamicResource DualKeyFontSize1}" FontFamily="{DynamicResource KeyFontFamily}">/</TextBlock>
+							<TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" FontSize="{DynamicResource DualKeyFontSize2}" FontFamily="{DynamicResource KeyFontFamily}" Margin="{DynamicResource DualKeySpacer}">?</TextBlock>
+						</DockPanel>
+					</Button>
 					<Button x:Name="KeyRShift" Content="Shift" Width="{DynamicResource RShiftWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyRShift_Click" Focusable="False"/>
 				</local:AutoGrid>
 

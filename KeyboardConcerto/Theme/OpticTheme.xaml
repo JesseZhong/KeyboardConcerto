@@ -113,7 +113,7 @@
                             BorderBrush="{StaticResource ButtonBorderBrush}" 
                             Background="{StaticResource ButtonBackground}">
 						<Grid>
-							<TextBlock x:Name="ButtonText" Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" 
+							<ContentPresenter x:Name="ButtonText" Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" 
 									   HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource TemplatedParent}}" 
 									   VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource TemplatedParent}}" 
 									   Margin="0" />
@@ -126,13 +126,13 @@
 						<!-- Mouse Over -->
 						<Trigger Property="IsMouseOver" Value="True">
 							<Setter TargetName="HighlightBorder" Property="Background" Value="{StaticResource ButtonMouseOverBackground}" />
-							<Setter TargetName="ButtonText" Property="Foreground" Value="{StaticResource ButtonMouseOverForeground}" />
+							<!--<Setter TargetName="ButtonText" Property="Foreground" Value="{StaticResource ButtonMouseOverForeground}" />-->
 						</Trigger>
 
 						<!-- Mouse Pressed -->
 						<Trigger Property="IsPressed" Value="True">
 							<Setter TargetName="HighlightBorder" Property="Background" Value="{StaticResource ButtonMousePressedBackground}" />
-							<Setter TargetName="ButtonText" Property="Foreground" Value="{StaticResource ButtonMousePressedForeground}" />
+							<!--<Setter TargetName="ButtonText" Property="Foreground" Value="{StaticResource ButtonMousePressedForeground}" />-->
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Keyboard\ExecutionSequence\Assoc.cs" />
+    <Compile Include="Keyboard\ExecutionSequence\ExecText.cs" />
     <Compile Include="MacrosWindow\OnScreenKeyboard.xaml.cs">
       <DependentUpon>OnScreenKeyboard.xaml</DependentUpon>
     </Compile>

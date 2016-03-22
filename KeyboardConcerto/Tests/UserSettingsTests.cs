@@ -13,11 +13,11 @@ namespace KeyboardConcerto.Tests {
 			UserSettings us = new UserSettings();
 
 			LinkedList<ExecNode> execSeq = new LinkedList<ExecNode>();
-			execSeq.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.VK_F, ExecVKey.EState.Press));
-			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_I, ExecVKey.EState.Press));
-			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_R, ExecVKey.EState.Press));
-			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_S, ExecVKey.EState.Press));
-			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_T, ExecVKey.EState.Press));
+			execSeq.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.VK_F, ExecVKey.KeyState.Press));
+			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_I, ExecVKey.KeyState.Press));
+			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_R, ExecVKey.KeyState.Press));
+			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_S, ExecVKey.KeyState.Press));
+			execSeq.AddLast(new ExecVKey(WindowsInput.VirtualKeyCode.VK_T, ExecVKey.KeyState.Press));
 
 			const string logitechKeyboardName = @"\\?\HID#VID_046D&PID_C31D&MI_00#8&133de0dc&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
 			const string asusKeyboardName = @"\\?\ACPI#PNP0303#4&16cfe3e0&0#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
@@ -34,17 +34,17 @@ namespace KeyboardConcerto.Tests {
 
 			// For Logitech K200 Keyboard. '1' key triggers 'Previous Media Track'.
 			LinkedList<ExecNode> execSeq0 = new LinkedList<ExecNode>();
-			execSeq0.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.MEDIA_PREV_TRACK, ExecVKey.EState.Press));
+			execSeq0.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.MEDIA_PREV_TRACK, ExecVKey.KeyState.Press));
 			us.AddEntry(logitechKeyboardName, RawInput.VirtualKeys.D1, "MAKE", execSeq0);
 
 			// For Logitech K200 Keyboard. '2' key triggers 'Next Media Track.
 			LinkedList<ExecNode> execSeq1 = new LinkedList<ExecNode>();
-			execSeq1.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.MEDIA_NEXT_TRACK, ExecVKey.EState.Press));
+			execSeq1.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.MEDIA_NEXT_TRACK, ExecVKey.KeyState.Press));
 			us.AddEntry(logitechKeyboardName, RawInput.VirtualKeys.D2, "MAKE", execSeq1);
 
 			// For Logitech K200 Keyboard. '3' key triggers 'Launch Media'.
 			LinkedList<ExecNode> execSeq2 = new LinkedList<ExecNode>();
-			execSeq2.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.LAUNCH_MEDIA_SELECT, ExecVKey.EState.Press));
+			execSeq2.AddFirst(new ExecVKey(WindowsInput.VirtualKeyCode.LAUNCH_MEDIA_SELECT, ExecVKey.KeyState.Press));
 			us.AddEntry(logitechKeyboardName, RawInput.VirtualKeys.D3, "MAKE", execSeq2);
 
 			// For Logitech K200 Keyboard. '5' key triggers 'Launch Media'.

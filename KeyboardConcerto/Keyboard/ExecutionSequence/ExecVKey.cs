@@ -1,8 +1,6 @@
 ﻿// ExecVKey.cs
 // Authored by Jesse Z. Zhong
 #region Usings
-using System;
-using System.Windows.Input;
 using WindowsInput;
 #endregion
 
@@ -13,7 +11,7 @@ namespace KeyboardConcerto {
 	/// </summary>
 	public class ExecVKey : ExecNode {
 
-		public enum EState {
+		public enum KeyState {
 			Press = 0,
 			Down,
 			Up
@@ -21,7 +19,7 @@ namespace KeyboardConcerto {
 
 		#region Members
 		private VirtualKeyCode mKey = VirtualKeyCode.NONAME;
-		private EState mState;
+		private KeyState mState;
 		#endregion
 
 		#region Constructor
@@ -30,7 +28,7 @@ namespace KeyboardConcerto {
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="state"></param>
-		public ExecVKey(VirtualKeyCode key, EState state) {
+		public ExecVKey(VirtualKeyCode key, KeyState state) {
 			this.mKey = key;
 			this.mState = state;
 		}
@@ -52,7 +50,7 @@ namespace KeyboardConcerto {
 		/// <summary>
 		/// Whether the key is pressed, down, or up.
 		/// </summary>
-		public EState State {
+		public KeyState State {
 			get {
 				return this.mState;
 			}
@@ -68,13 +66,13 @@ namespace KeyboardConcerto {
 		/// <returns>True if execution was successful.</returns>
 		public override bool Execute() {
 			switch (this.mState) {
-				case EState.Press:
+				case KeyState.Press:
 					InputSimulator.SimulateKeyPress(this.mKey);
 					break;
-				case EState.Down:
+				case KeyState.Down:
 					InputSimulator.SimulateKeyDown(this.mKey);
 					break;
-				case EState.Up:
+				case KeyState.Up:
 					InputSimulator.SimulateKeyUp(this.mKey);
 					break;
 				default:

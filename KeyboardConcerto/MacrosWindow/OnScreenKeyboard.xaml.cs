@@ -458,19 +458,19 @@ namespace KeyboardConcerto {
 			this.ForwardVKey(VKey.NEXT);
 		}
 
-		private void KeyUp_Click(object sender, RoutedEventArgs e) {
+		private void KeyUpArrow_Click(object sender, RoutedEventArgs e) {
 			this.ForwardVKey(VKey.UP);
 		}
 
-		private void KeyLeft_Click(object sender, RoutedEventArgs e) {
+		private void KeyLeftArrow_Click(object sender, RoutedEventArgs e) {
 			this.ForwardVKey(VKey.LEFT);
 		}
 
-		private void KeyDown_Click(object sender, RoutedEventArgs e) {
+		private void KeyDownArrow_Click(object sender, RoutedEventArgs e) {
 			this.ForwardVKey(VKey.DOWN);
 		}
 
-		private void KeyRight_Click(object sender, RoutedEventArgs e) {
+		private void KeyRightArrow_Click(object sender, RoutedEventArgs e) {
 			this.ForwardVKey(VKey.RIGHT);
 		}
 

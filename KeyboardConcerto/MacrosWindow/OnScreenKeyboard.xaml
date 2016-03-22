@@ -380,11 +380,11 @@
 				<Button x:Name="KeyPageDown" Content="PgDn" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyPageDown_Click" Focusable="False"/>
 				<Grid local:AutoGrid.ColumnSpan="3" Height="{DynamicResource KeyHeight}"/>
 				<Grid/>
-				<Button x:Name="KeyUp" Content="&#9650;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyUp_Click" Focusable="False"/>
+				<Button x:Name="KeyUpArrow" Content="&#9650;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyUpArrow_Click" Focusable="False"/>
 				<Grid/>
-				<Button x:Name="KeyLeft" Content="&#9664;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyLeft_Click" Focusable="False"/>
-				<Button x:Name="KeyDown" Content="&#9660;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyDown_Click" Focusable="False"/>
-				<Button x:Name="KeyRight" Content="&#9654;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyRight_Click" Focusable="False"/>
+				<Button x:Name="KeyLeftArrow" Content="&#9664;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyLeftArrow_Click" Focusable="False"/>
+				<Button x:Name="KeyDownArrow" Content="&#9660;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource KeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyDownArrow_Click" Focusable="False"/>
+				<Button x:Name="KeyRightArrow" Content="&#9654;" Width="{DynamicResource KeyWidth}" Height="{DynamicResource KeyHeight}" FontSize="{DynamicResource BigKeyFontSize}" FontFamily="{DynamicResource KeyFontFamily}" Click="KeyRightArrow_Click" Focusable="False"/>
 			</local:AutoGrid>
 
 			<!-- Numpad -->

@@ -1,4 +1,0 @@
-﻿UI
-	OnScreenKeyboard control
-
-Add Simulate Text for easy text input. (None of that pretending to hold shift crap)

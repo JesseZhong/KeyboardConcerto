@@ -159,7 +159,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Notes\TODO.txt" />
     <Resource Include="Notes\DefaultApps.txt" />
     <Resource Include="Notes\UIDesign.txt" />
     <Resource Include="Notes\Issues.txt" />

@@ -11,7 +11,7 @@ message. Back in DLL I either call CallNextHookEx to pass the keyboard message o
 message is lost.
 	"I faced situation when DLL got the keyboard message first before my application processed WM_INPUT. 
 So before answering to DLL I have a look into application message queue with PeekMessage whether there's 
-some WM_INPUT pending and process it first. Now I work on mouse support which seems to be even more 
+some WM_INPUT pending and process it first. Now I work on mouse support which seems to be even more  
 challenging and during API study I think also keyboard can be improved. So later I might have some 
 better way - or at least better description if someone would be interested." 
 																				~ Petre Medek
@@ -19,3 +19,9 @@ better way - or at least better description if someone would be interested."
 C++ Implementation Description and Example by Vit Blecha
 "Using Raw Input from C# to handle multiple keyboards"
 http://www.codeproject.com/Articles/17123/Using-Raw-Input-from-C-to-handle-multiple-keyboard?fid=375378&fr=226#xx0xx
+
+
+UI
+	OnScreenKeyboard control
+
+Add Simulate Text for easy text input. (None of that pretending to hold shift crap)

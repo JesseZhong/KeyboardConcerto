@@ -8,26 +8,33 @@
     <LinearGradientBrush x:Key="WindowBackground" Opacity="100.0" EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
 		<GradientStop Color="#FF090909" Offset="0.988"/>
 		<GradientStop Color="#FF252526" Offset="0.288"/>
-        </LinearGradientBrush>
+    </LinearGradientBrush>
     <SolidColorBrush x:Key="WindowBorderBrush" Color="#55000000" />
     <SolidColorBrush x:Key="TopBarBackground" Color="#FF141414" />
     <SolidColorBrush x:Key="TopBarBorderBrush" Color="Black" />
-    <SolidColorBrush x:Key="TopBarForeground" Color="#FF3498DB" />
+	<SolidColorBrush x:Key="TopBarForeground" Color="#FF1A8CFF" />
     <FontFamily x:Key="WindowFontFamily">OpenSans</FontFamily>
     <sys:Double x:Key="WindowFontSize">11</sys:Double>
+	
+	<!-- Tab Control Properties -->
+	<LinearGradientBrush x:Key="TabControlBackground" Opacity="100.0" EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+		<GradientStop Color="#FF090909" Offset="0.988"/>
+		<GradientStop Color="#FF252526" Offset="0.288"/>
+	</LinearGradientBrush>
+	<SolidColorBrush x:Key="TabControlBorderBrush" Color="#55000000" />
 
-    <!-- Button Properties -->
+	<!-- Button Properties -->
     <SolidColorBrush x:Key="ButtonBackground" Color="#12FFFFFF" />
     <SolidColorBrush x:Key="ButtonBorderBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="ButtonForeground" Color="White" />
+	<SolidColorBrush x:Key="ButtonForeground" Color="White" />
     <sys:Double x:Key="ButtonFontSize">12</sys:Double>
     <sys:Boolean x:Key="ButtonSnapsToDevicePixels">True</sys:Boolean>
 
     <!-- Button Mouse Over Properities -->
     <SolidColorBrush x:Key="ButtonMouseOverBackground" Color="#28FFFFFF" />
-    <SolidColorBrush x:Key="ButtonMouseOverForeground" Color="White" />
+	<SolidColorBrush x:Key="ButtonMouseOverForeground" Color="#FF1A8CFF" />
     <SolidColorBrush x:Key="ButtonMousePressedBackground" Color="#6CFFFFFF" />
-    <SolidColorBrush x:Key="ButtonMousePressedForeground" Color="White" />
+	<SolidColorBrush x:Key="ButtonMousePressedForeground" Color="#FF1A8CFF" />
 
 
     <!-- Window Style -->
@@ -90,7 +97,32 @@
         </Setter>
     </Style>
 
-    <!-- Button Style -->
+	<!-- Tab Control -->
+	<Style TargetType="{x:Type TabControl}">
+		<Setter Property="Background" Value="{DynamicResource TabControlBackground}" />
+	</Style>
+	
+	<!-- Tab Item -->
+	<Style TargetType="{x:Type TabItem}">
+		<Setter Property="Background" Value="{DynamicResource TabControlBackground}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type TabItem}">
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsSelected" Value="True">
+							<Setter Property="Background" Value="LightSkyBlue" />
+						</Trigger>
+						<Trigger Property="IsSelected" Value="False">
+							<Setter Property="Background" Value="GhostWhite" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!-- Button Style -->
 	<Style TargetType="{x:Type Button}">
 		<Setter Property="Background" Value="{StaticResource ButtonBackground}" />
 		<Setter Property="BorderBrush" Value="{StaticResource ButtonBorderBrush}" />
@@ -124,17 +156,30 @@
 					<ControlTemplate.Triggers>
 
 						<!-- Mouse Over -->
-						<Trigger Property="IsMouseOver" Value="True">
+						<Trigger Property="IsMouseOver" Value="True" TextBlock.Foreground="Red">
 							<Setter TargetName="HighlightBorder" Property="Background" Value="{StaticResource ButtonMouseOverBackground}" />
-							<!--<Setter TargetName="ButtonText" Property="Foreground" Value="{StaticResource ButtonMouseOverForeground}" />-->
+							<Setter TargetName="ButtonText" Property="Button.Foreground" Value="{StaticResource ButtonMouseOverForeground}" />
 						</Trigger>
 
 						<!-- Mouse Pressed -->
 						<Trigger Property="IsPressed" Value="True">
 							<Setter TargetName="HighlightBorder" Property="Background" Value="{StaticResource ButtonMousePressedBackground}" />
-							<!--<Setter TargetName="ButtonText" Property="Foreground" Value="{StaticResource ButtonMousePressedForeground}" />-->
+							<Setter TargetName="ButtonText" Property="TextBlock.Foreground" Value="{StaticResource ButtonMousePressedForeground}" />
 						</Trigger>
 					</ControlTemplate.Triggers>
+					
+					<ControlTemplate.Resources>
+						<Style TargetType="{x:Type TextBlock}">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsMouseOver}" Value="True">
+									<Setter Property="Foreground" Value="{StaticResource ButtonMouseOverForeground}" />
+								</DataTrigger>
+								<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=IsPressed}" Value="True">
+									<Setter Property="Foreground" Value="{StaticResource ButtonMousePressedForeground}" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</ControlTemplate.Resources>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>

@@ -22,6 +22,9 @@
 		<GradientStop Color="#FF252526" Offset="0.288"/>
 	</LinearGradientBrush>
 	<SolidColorBrush x:Key="TabControlBorderBrush" Color="#55000000" />
+	
+	<!-- Tab Item Properties -->
+	<SolidColorBrush x:Key="TabItemForeground" Color="White" />
 
 	<!-- Button Properties -->
     <SolidColorBrush x:Key="ButtonBackground" Color="#12FFFFFF" />
@@ -35,8 +38,73 @@
 	<SolidColorBrush x:Key="ButtonMouseOverForeground" Color="#FF1A8CFF" />
     <SolidColorBrush x:Key="ButtonMousePressedBackground" Color="#6CFFFFFF" />
 	<SolidColorBrush x:Key="ButtonMousePressedForeground" Color="#FF1A8CFF" />
+	
+	<!--
+		<LinearGradientBrush x:Key="TabHeaderBorderBrush" Opacity="100.0" EndPoint="0,0.5" StartPoint="1,0.5">
+			<GradientStop Color="#FF252526" Offset="0.990"/>
+			<GradientStop Color="Gray" Offset="0.908"/>
+			<GradientStop Color="#FF252526" Offset="0.088"/>
+		</LinearGradientBrush>
 
+		<LinearGradientBrush x:Key="TabItemBorderBrush" Opacity="100.0" EndPoint="0,0.5" StartPoint="1,0.5">
+			<GradientStop Color="#FF1060BF" Offset="0.1"/>
+			<GradientStop Color="#FF1BBEFF" Offset="0.5"/>
+			<GradientStop Color="#FF1060BF" Offset="0.9"/>
+		</LinearGradientBrush>
 
+		<Style TargetType="{x:Type TabControl}">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type TabControl}">
+						<Grid KeyboardNavigation.TabNavigation="Local">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Border BorderThickness="0,0,0,3" BorderBrush="{DynamicResource TabHeaderBorderBrush}">
+								<TabPanel Name="HeaderPanel" Grid.Row="0" Panel.ZIndex="1" Margin="0,0,0,-3" 
+									  IsItemsHost="True" KeyboardNavigation.TabIndex="1" Background="Transparent" />
+							</Border>
+							<Border Name="Border" Grid.Row="1" Background="Transparent" BorderBrush="Transparent" 
+									KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabIndex="2" >
+								<ContentPresenter Name="PART_SelectedContentHost" Grid.Row="1" ContentSource="SelectedContent" />
+							</Border>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style TargetType="{x:Type TabItem}">
+			<Setter Property="BorderBrush" Value="Transparent"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type TabItem}">
+						<StackPanel Orientation="Vertical">
+							<Label x:Name="TabName" FontSize="14" Foreground="White" Margin="8,1,8,1">
+								<ContentPresenter ContentSource="Header" RecognizesAccessKey="True" />
+							</Label>
+							<Border BorderThickness="0.5" BorderBrush="Black">
+								<Rectangle x:Name="BorderLine" Fill="Transparent" Height="3"/>
+							</Border>
+						</StackPanel>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter TargetName="BorderLine" Property="Fill" Value="#0CFFFFFF" />
+								<Setter TargetName="TabName" Property="Foreground" Value="White" />
+							</Trigger>
+							<Trigger Property="IsSelected" Value="True">
+								<Setter TargetName="TabName" Property="Foreground" Value="White" />
+								<Setter TargetName="BorderLine" Property="Fill" Value="{DynamicResource TabItemBorderBrush}" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+	-->
+	
     <!-- Window Style -->
     <Style x:Key="OpticWindow" TargetType="{x:Type Window}">
 
@@ -100,21 +168,35 @@
 	<!-- Tab Control -->
 	<Style TargetType="{x:Type TabControl}">
 		<Setter Property="Background" Value="{DynamicResource TabControlBackground}" />
+		<Setter Property="BorderThickness" Value="0,4,0,0" />
+		<Setter Property="Margin" Value="0,-4,0,0" />
 	</Style>
-	
-	<!-- Tab Item -->
+
 	<Style TargetType="{x:Type TabItem}">
-		<Setter Property="Background" Value="{DynamicResource TabControlBackground}" />
+		<Setter Property="BorderBrush" Value="Transparent"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type TabItem}">
-
+					<StackPanel>
+						<Border x:Name="BorderLine" BorderBrush="Black" Background="Transparent" Padding="8,1,8,1" BorderThickness="0,0,0,4" SnapsToDevicePixels="True">
+							<Label x:Name="TabName" FontSize="15" Foreground="Black">
+								<ContentPresenter ContentSource="Header" RecognizesAccessKey="True" />
+							</Label>
+						</Border>
+					</StackPanel>
 					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="BorderLine" Property="Background" Value="Green" />
+							<Setter TargetName="TabName" Property="Foreground" Value="White" />
+							<Setter TargetName="BorderLine" Property="BorderBrush" Value="Transparent" />
+						</Trigger>
 						<Trigger Property="IsSelected" Value="True">
-							<Setter Property="Background" Value="LightSkyBlue" />
+							<Setter TargetName="BorderLine" Property="Background" Value="Transparent" />
+							<Setter TargetName="TabName" Property="Foreground" Value="White" />
+							<Setter TargetName="BorderLine" Property="BorderBrush" Value="#FF1A8CFF" />
 						</Trigger>
 						<Trigger Property="IsSelected" Value="False">
-							<Setter Property="Background" Value="GhostWhite" />
+							<Setter TargetName="TabName" Property="Foreground" Value="Black" />
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

@@ -27,3 +27,5 @@ UI
 Add Simulate Text for easy text input. (None of that pretending to hold shift crap)
 
 Add user actions stack for Undo functionality. Test thoroughly.
+
+Add tool tips for controls.
